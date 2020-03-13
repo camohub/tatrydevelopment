@@ -1,0 +1,8 @@
+
+default:
+	default:
+		a1: 'Programming web applications.'
+		a2: 'Selenium tests for web applications and REST API.'
+		a3: 'Programming customized e commerce systems for free <small>(except the price for hosting)</small>'
+		a4: 'Prenájom eshopov'
+		a5: 'Programovanie startupov zadarmo <small>(za cenu nákladov na hosting)</small>'

@@ -1,0 +1,15 @@
+unexpectedError: Pri spracovaní údajov došlo k chybe. Kontaktujte prosím administrátora.
+
+signInForm:
+	name.label: Meno
+	name.required: Vyplňte prosím meno
+	password.label: Heslo
+	password.required: Vyplňte prosím heslo
+	password.length: Heslo musí mať dlžku aspoň 6 znakov
+	password2.label: Zopakujte heslo
+	password2.required: Vyplňte prosím heslo
+	password2.equal: Heslá sa nezhodujú
+	userNotFound: Používateľ s daným menom neexistuje
+	invalidCredentials: Nesprávne prihlasovacie údaje
+	userInactive: Pouívateľ je momentálne zablokovaný
+	success: Boli ste úspešne prihlásený

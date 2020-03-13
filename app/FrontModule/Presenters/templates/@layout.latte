@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta charset="utf-8">
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+	<link rel="icon" type="image/x-icon" href="{$basePath}/assets/imgs/favicon.ico">
+	<link href='{$basePath}/assets/node_modules/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Cinzel:900" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="{$basePath}/assets/node_modules/ublaboo-datagrid/assets/datagrid.css">
+	<link rel="stylesheet" type="text/css" href="{$basePath}/assets/node_modules/ublaboo-datagrid/assets/datagrid-spinners.css">
+	<link href="{$basePath}/assets/css/main.min.css" rel="stylesheet">
+
+	<script src="{$basePath}/assets/node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="{$basePath}/assets/node_modules/nette.ajax.js/nette.ajax.js" async defer></script>
+	<script src="{$basePath}/assets/node_modules/ublaboo-datagrid/assets/datagrid.js"></script>
+	<script src="{$basePath}/assets/node_modules/ublaboo-datagrid/assets/datagrid-instant-url-refresh.js"></script>
+	<script src="{$basePath}/assets/node_modules/ublaboo-datagrid/assets/datagrid-spinners.js"></script>
+	<script src="{$basePath}/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="{$basePath}/assets/js/main.min.js"></script>
+
+	<title>{ifset title}{include title|stripHtml} | {/ifset}Tatry Development</title>
+</head>
+
+<body class="init-color">
+	<div id="langs">
+		<a n:foreach="$locales as $l" n:href="this, locale => $l">{$l}</a>
+	</div>
+
+	<div class="flash-box">
+		<div n:foreach="$flashes as $flash" n:class="alert, $flash->type == 'success' ? alert-success : alert-danger, col-xs-12, col-sm-8, col-md-6, col-sm-offset-2, col-md-offset-3">{_$flash->message}</div>
+	</div>
+
+	{include content}
+
+
+	{block scripts}
+		{*<script src="https://nette.github.io/resources/js/3/netteForms.min.js"></script>*}
+	{/block}
+
+	<img id="loader" src="{$basePath}/assets/imgs/loader.gif">
+</body>
+</html>

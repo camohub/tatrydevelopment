@@ -1,0 +1,17 @@
+
+default:
+	default:
+		a1: 'Programovanie webových aplikácií na zákazku.'
+		a2: 'Selenium testy pre webové aplikácie a REST API.'
+		a3: 'Programovanie eshopov na mieru zadarmo <small>(za cenu nákladov na hosting)</small>'
+		a4: 'Prenájom eshopov'
+		a5: 'Programovanie startupov zadarmo <small>(za cenu nákladov na hosting)</small>'
+
+		block-1-1: 'Programovanie webových aplikácií, importy, exporty, databázy podľa požiadaviem zákazníka.'
+		block-1-2: 'Technilogie: PHP, Javascript, SQL, NO SQL, CSS, HTML, Nette, Mysql, Elasticsearch, Mongo DB, ....'
+
+		block-2-1: 'Selénium testy pre vaše webové aplikácie a REST API.'
+		block-2-2: 'Naprogramovanie 15eur/hod a následné spúštanie + chybové reporty. 10eur/deň'
+
+test:
+	x: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'

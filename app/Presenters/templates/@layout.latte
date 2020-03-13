@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta charset="utf-8">
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+	<link rel="icon" type="image/x-icon" href="https://www.indexpodnikatela.sk/assets/favicon.ico">
+	<link href='assets/node_modules/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Cinzel:900" rel="stylesheet">"
+	<link href="assets/css/main.css" rel="stylesheet">"
+
+	<script src="assets/node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="assets/js/main.js"></script>
+
+	<title>{ifset title}{include title|stripHtml} | {/ifset}Tatry Development</title>
+</head>
+
+<body class="init-color">
+	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+
+	{include content}
+
+
+	{block scripts}
+		{*<script src="https://nette.github.io/resources/js/3/netteForms.min.js"></script>*}
+	{/block}
+</body>
+</html>

@@ -1,0 +1,62 @@
+
+{block content}
+
+{translator templates.default.default}
+
+<div class="container">
+	<div class="row">
+		<h1 class="col-xs-12 brand">Tatry Development</h1>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<a n:href=":Front:Default:default" class="ajax">ajax</a>
+
+			{control signInForm}
+
+			<span class="anchor">{_a1|noescape}</span>
+			<div class="row slide-block-1">
+				<div class="col-sm-8 col-sm-offset-4">
+					{_block-1-1|noescape}<br>
+					{_block-1-2|noescape}
+				</div>
+			</div>
+			<span class="anchor">{_a2|noescape}</span>
+			<div class="row slide-block-1">
+				<div class="col-sm-8 col-sm-offset-4">
+					{_block-2-1|noescape}<br>
+					{_block-2-2|noescape}
+				</div>
+			</div>
+			<span class="anchor">{_a3|noescape}</span>
+			<div class="row slide-block-1">
+				<div class="col-sm-8 col-sm-offset-4">
+					{_block-1-1|noescape}<br>
+					{_block-1-2|noescape}
+				</div>
+			</div>
+			<span class="anchor">{_templates.default.default.a4|noescape}</span>
+			<div class="row slide-block-1">
+				<div class="col-sm-8 col-sm-offset-4">
+					{_block-1-1|noescape}<br>
+					{_block-1-2|noescape}
+				</div>
+			</div>
+			<span class="anchor">{_a5|noescape}</span>
+		</div>
+	</div>
+
+	{control datagridTest}
+
+</div>
+{/translator}
+
+<script>
+$(function() {
+	$('span.anchor').on('click', function(e)
+	{
+		$(this).next('div.slide-block-1').slideToggle();
+	})
+});
+</script>
+
+{/block}
