@@ -8,6 +8,8 @@ ORM
 --------------------------------------
 - config - extensions, orm
 - Model/Orm/Orm.php - definicie repozitarov cez anotacie
+- Pri logine a vytváraní Nette\Security\IIdentity 
+	je nutné previesť relácie $usera na pole cez `$user->toArray(ToArrayConverter::RELATIONSHIP_AS_ARRAY)`
 
 PHINX
 --------------------------------------
@@ -17,6 +19,7 @@ PHINX
 - vendor\bin\phinx create MyNewMigration --template="migrations\template"
 - v DB je tabulka phinxlog
 - vendor\bin\phinx migrate -e development - spusti migracie nad development databazou
+- migrácie by nemali obsahovať transakcie!!! 
 
 LESS/CSS/JS
 --------------------------------------

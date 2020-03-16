@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\FrontModule\Presenters;
 
 use App\Front\Components\DatagridTestControl;
+use App\Front\Components\DatagridUsersControl;
 use App\Front\Components\IDatagridTestControlFactory;
-use App\Front\Components\ISignInFormControlFactory;
+use App\Front\Components\IDatagridUsersControlFactory;
 use App\Front\Components\ITestControlFactory;
-use App\Front\Components\SignInFormControl;
 use App\Front\Components\TestControl;
 use App\Model\Orm\Orm;
 use App\Presenters\BasePresenter;
 use Nette\Database\Context;
+use Tracy\Debugger;
 
 
 class DefaultPresenter extends BasePresenter
@@ -27,39 +28,50 @@ class DefaultPresenter extends BasePresenter
 	/** @var  IDatagridTestControlFactory @inject */
 	public $datagridTestControlFactory;
 
-	/** @var  ISignInFormControlFactory @inject */
-	public $signInFormControlFactory;
+	/** @var  IDatagridUsersControlFactory @inject */
+	public $datagridUsersControlFactory;
 
 	/** @var  Orm @inject */
 	public $orm;
 
+
 	public function actionDefault()
 	{
-		//$user = $this->orm->users->getBy(['name =' => 'Čamo', 'password !=' => NULL]);
-		//Debugger::barDump($user, 'Presenter dump');
-		/*Debugger::barDump($this->translator->getAvailableLocales());
-		Debugger::barDump($this->translator->getDefaultLocale());
-		Debugger::barDump($this->translator->getLocale());*/
+		$this->template->test = 'Before ajax call';
+
+		/*$user = $this->orm->users->getById(2);
+		$this->orm->users->removeAndFlush($user);*/
+
+		if( $this->isAjax() )
+		{
+			$this->template->test = 'After ajax call ' . date('h:i:s');
+			$this->redrawControl('test');
+		}
 	}
 
-	public function actionEshop()
+
+	public function renderTest()
 	{
+		$this->user->logout();
 	}
 
-	public function actionSelenium()
+
+	public function actionSignIn()
 	{
-
+		$this['modal']->addContentComponent($this['signInForm']);
+		$this->showModal = !$this->user->isLoggedIn();
+		$this->setView('default');
 	}
 
-	public function actionExample()
-	{
 
-	}
+
+
+
 
 
 	protected function createComponentTest(): TestControl
 	{
-		return $this->testControlFactory->create('aaaaaaaaaaaaaaaaaaaaaaa');
+		return $this->testControlFactory->create('aaaaaaaaaaaaaaaaaa');
 	}
 
 
@@ -69,8 +81,8 @@ class DefaultPresenter extends BasePresenter
 	}
 
 
-	protected function createComponentSignInForm(): SignInFormControl
+	protected function createComponentDatagridUsers(): DatagridUsersControl
 	{
-		return $this->signInFormControlFactory->create();
+		return $this->datagridUsersControlFactory->create('ddddddddddddddddddd');
 	}
 }

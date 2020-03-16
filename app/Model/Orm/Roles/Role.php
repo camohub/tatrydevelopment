@@ -5,6 +5,7 @@ namespace App\Model\Orm\Roles;
 
 use App\Model\Orm\Users\User;
 use Nextras\Orm\Entity\Entity;
+use Nextras\Orm\Relationships\ManyHasMany;
 
 
 /**
@@ -12,7 +13,7 @@ use Nextras\Orm\Entity\Entity;
  *
  * @property int                        $id {primary}
  * @property string                     $name
- * @property User[]                     $users {m:m User::$roles}
+ * @property ManyHasMany|User[]         $users {m:m User::$roles}
  */
 class Role extends Entity
 {

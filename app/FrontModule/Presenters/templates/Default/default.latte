@@ -8,10 +8,11 @@
 		<h1 class="col-xs-12 brand">Tatry Development</h1>
 	</div>
 	<div class="row">
-		<div class="col-xs-12">
+		<div id="mainMenu" class="col-xs-12">
 			<a n:href=":Front:Default:default" class="ajax">ajax</a>
-
-			{control signInForm}
+			<a n:href=":Front:Default:signIn">login</a>
+			<a n:href=":Front:Default:test">test</a>
+			<a n:href=":Front:Default:datagrid">datagrid</a>
 
 			<span class="anchor">{_a1|noescape}</span>
 			<div class="row slide-block-1">
@@ -34,7 +35,7 @@
 					{_block-1-2|noescape}
 				</div>
 			</div>
-			<span class="anchor">{_templates.default.default.a4|noescape}</span>
+			<span class="anchor">{_a4|noescape}</span>
 			<div class="row slide-block-1">
 				<div class="col-sm-8 col-sm-offset-4">
 					{_block-1-1|noescape}<br>
@@ -45,9 +46,14 @@
 		</div>
 	</div>
 
-	{control datagridTest}
+	<div class="row" n:snippet="test" data-ajax-append>
+		<div class="col-xs-12">
+			{ifset $test}{$test}{/ifset}
+		</div>
+	</div>
 
 </div>
+
 {/translator}
 
 <script>

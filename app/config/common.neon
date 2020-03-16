@@ -34,6 +34,12 @@ services:
 	authorizatorFactory: App\Model\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create
 
+	- App\Front\Components\IModalControlFactory
 	- App\Front\Components\ITestControlFactory
-	- App\Front\Components\IDatagridTestControlFactory
+
+	#FORMS
 	- App\Front\Components\ISignInFormControlFactory
+
+	#DATAGRIDS
+	- App\Front\Components\IDatagridTestControlFactory
+	- App\Front\Components\IDatagridUsersControlFactory

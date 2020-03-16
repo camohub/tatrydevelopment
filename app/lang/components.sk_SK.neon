@@ -3,3 +3,17 @@ datagrid:
 	id: ID
 	text: Text
 	created: Vytvorené
+
+datagridUsers:
+	id: ID
+	name: Meno
+	email: Email
+	roles: Role
+	created: Vytvorený
+	active: Aktívny
+	inactive: Neaktívny
+	activeAll: všetky
+	active1: aktívny
+	active0: neaktívny
+	delete: Zmazať
+	confirmDelete: Naozaj chcete zmazať záznam %s?

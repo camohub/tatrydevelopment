@@ -23,6 +23,8 @@ class SignInFormControl extends Control
 
 	public $orm;
 
+	public $modalTitle = '//forms.signInForm.title';
+
 
 	public function __construct(Orm $orm , UserManager $u, Translator $t)
 	{
@@ -34,6 +36,7 @@ class SignInFormControl extends Control
 
 	public function render()
 	{
+		$this->getPresenter()->setReferer(self::class);
 		$this->template->setFile(__DIR__ . '/signInForm.latte');
 		$this->template->render();
 	}
@@ -47,11 +50,11 @@ class SignInFormControl extends Control
 		$form->addText('name', 'name.label')
 			->setRequired('name.required');
 
-		$form->addText('password', 'password.label')
+		$form->addPassword('password', 'password.label')
 			->setRequired('password.required')
 			->addRule($form::MIN_LENGTH, 'password.length', 6);
 
-		$form->addText('password2', 'password2.label')
+		$form->addPassword('password2', 'password2.label')
 			->setRequired('password2.required')
 			->addRule($form::EQUAL, 'password2.equal', $form['password']);
 
@@ -66,32 +69,37 @@ class SignInFormControl extends Control
 	public function formSucceeded(Form $form, $values)
 	{
 		$presenter = $this->getPresenter();
-
 		try
 		{
-			Debugger::barDump($values);
-			$this->userManager->authenticate([$values->name, $values->password]);
+			$presenter->user->login($values->name, $values->password);
 		}
 		catch( AuthenticationException $e )
 		{
 			if( $e->getCode() == UserManager::IDENTITY_NOT_FOUND ) $form->addError('userNotFound');
 			elseif ( $e->getCode() == UserManager::INVALID_CREDENTIAL ) $form->addError('invalidCredentials');
+			return;
 		}
 		catch( AccessDeniedException $e )
 		{
 			$form->addError('userInactive');
-		}
-		catch( InvalidArgumentException $e )
-		{
-			$form->addError('aaaaaaaaaaaaaaaaaaahaaaaaaaaaaaaaaaaaaaaa');
+			return;
 		}
 		catch( \Exception $e )
 		{
 			$form->addError('//forms.unexpectedError');
+			return;
+		}
+
+
+		if( $form->hasErrors() )  // Only for sure
+		{
+			$form->addError('//forms.unexpectedError');
+			return;
 		}
 
 		$presenter->flashSuccess('//forms.signInForm.success');
-		$presenter->redirect('this');
+		$referer = $presenter->getReferer(self::class);
+		$referer ? $presenter->redirectUrl($referer) : $presenter->redirect('this');
 	}
 
 }

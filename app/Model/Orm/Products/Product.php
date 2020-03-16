@@ -15,7 +15,8 @@ use Nextras\Orm\Relationships\OneHasMany;
  * @property int                        $id          {primary}
  * @property string                     $title
  * @property string                     $content
- * @property DateTimeImmutable          $createdAt   {default now}
+ * @property DateTimeImmutable          $created   {default now}
+ * @property DateTimeImmutable          $deleted   {default NULL}
  */
 class Product extends Entity
 {

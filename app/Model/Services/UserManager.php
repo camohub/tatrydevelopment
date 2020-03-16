@@ -8,6 +8,7 @@ use Nette;
 use App;
 use Nette\Security\Passwords;
 use Nette\Utils\Random;
+use Nextras\Orm\Entity\ToArrayConverter;
 use Tracy\Debugger;
 
 
@@ -42,14 +43,8 @@ class UserManager implements Nette\Security\IAuthenticator
 	{
 		list( $name, $password ) = $credentials;
 
-		Debugger::barDump('beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
-		Debugger::barDump($this->orm->users);
-		Debugger::barDump($this->orm->users->getBy( [ 'name =' => $name, 'password !=' => NULL ] ));
 		/** @var App\Model\Orm\Users\User|NULL $user */
-		$user = $this->orm->users->getBy( [ 'name =' => $name, 'password !=' => NULL ] );
-
-		Debugger::barDump($user);
-		Debugger::barDump($this->passwords->verify( $password, $user->password ));
+		$user = $this->orm->users->getBy( [ 'name' => $name, 'password!=' => NULL ] );
 
 		if ( ! $user )
 		{
@@ -75,7 +70,9 @@ class UserManager implements Nette\Security\IAuthenticator
 			$rolesArr[] = $role->name;
 		}
 
-		return new Nette\Security\Identity( $user->id, $rolesArr, $user->toArray() );
+		$userArr = $user->toArray(ToArrayConverter::RELATIONSHIP_AS_ARRAY);
+
+		return new Nette\Security\Identity( $userArr['id'], $rolesArr, $userArr );
 	}
 
 

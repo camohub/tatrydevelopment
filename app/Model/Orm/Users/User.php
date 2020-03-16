@@ -21,7 +21,8 @@ use Nextras\Orm\Relationships\OneHasMany;
  * @property boolean                    $active
  * @property string                     $confirmationCode
  * @property DateTimeImmutable          $created {default now}
- * @property Role[]                     $roles {m:m Role::$users, isMain=true}
+ * @property DateTimeImmutable|NULL     $deleted
+ * @property ManyHasMany|Role[]         $roles {m:m Role::$users, isMain=true}
  */
 class User extends Entity
 {

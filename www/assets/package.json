@@ -6,8 +6,7 @@
 	"dependencies": {
 		"bootstrap": "^3.4.1",
 		"jquery": "^3.4.1",
-		"nette.ajax.js": "^2.3.0",
-		"nittro": "^2.0.61",
+		"naja": "^1.7.0",
 		"ublaboo-datagrid": "^6.2.10"
 	},
 	"devDependencies": {},

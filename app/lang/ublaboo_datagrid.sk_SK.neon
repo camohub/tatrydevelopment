@@ -1,0 +1,8 @@
+all: Všetko
+reset_filter: Reset
+items: Položky
+from: Od
+previous: Prev
+next: Next
+perPage_submit: Počet
+action: Akcie

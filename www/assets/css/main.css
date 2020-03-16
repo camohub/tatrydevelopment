@@ -18,17 +18,16 @@ h1.brand {
   font-size: 125px;
   font-weight: bolder;
 }
-.init-color,
-.init-color a,
-.init-color span.anchor {
-  color: #0f1225;
+.init-color {
+  color: #0f1225 !important;
+}
+.init-color #mainMenu a,
+.init-color #mainMenu span.anchor {
+  color: #0f1225 !important;
 }
 span.anchor,
 a,
-a:hover,
-a:active,
 a:visited {
-  display: block;
   color: #948aad;
   text-decoration: none;
   transition-property: color;
@@ -38,8 +37,20 @@ a:visited {
 }
 span.anchor:hover,
 a:hover,
-a:active {
+a:visited:hover,
+span.anchor:active,
+a:active,
+a:visited:active,
+span.anchor:focus,
+a:focus,
+a:visited:focus {
   color: #514b63;
+  text-decoration: none;
+}
+#mainMenu span.anchor,
+#mainMenu a,
+#mainMenu a:visited {
+  display: block;
 }
 small {
   font-size: 0.5em;
@@ -70,13 +81,55 @@ small {
   margin-left: -25px;
   margin-top: -25px;
 }
-.alert {
-  font-size: 14px;
-}
 .flash-box {
   position: absolute;
   top: 200px;
   left: 0;
   width: 100%;
   z-index: 10000;
+}
+.flash-box .alert {
+  margin: 15px auto;
+}
+@media (min-width: 750px) {
+  .flash-box .alert {
+    width: 700px;
+  }
+}
+.alert {
+  font-size: 14px;
+  border: 3px solid transparent;
+}
+.alert-success {
+  background-color: #e5fff1;
+  border-color: #36db80;
+}
+.alert-danger {
+  background-color: #ffeaea;
+  border-color: #f9717a;
+}
+.modal-content {
+  border-radius: 8px;
+}
+.modal-dialog {
+  font-size: 16px;
+}
+@media (min-width: 768px) {
+  .modal-dialog {
+    margin-top: 100px;
+  }
+}
+.modal-dialog .modal-content {
+  border: 5px solid #e7ddff;
+}
+.modal-dialog h4 {
+  font-weight: bold;
+}
+.btn {
+  padding: 6px 20px;
+}
+.datagrid {
+  font-size: 18px;
+  font-family: Verdana;
+  color: #444;
 }

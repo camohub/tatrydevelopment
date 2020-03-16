@@ -1,6 +1,7 @@
 unexpectedError: Pri spracovaní údajov došlo k chybe. Kontaktujte prosím administrátora.
 
 signInForm:
+	title: Prihásenie
 	name.label: Meno
 	name.required: Vyplňte prosím meno
 	password.label: Heslo
