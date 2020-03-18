@@ -144,6 +144,7 @@ class DatagridUsersControl extends Control
 			->onChange[] = [$this, 'activeChange'];
 	}
 
+
 	public function activeChange($id, $newValue)
 	{
 		$user = $this->orm->users->getById($id);
