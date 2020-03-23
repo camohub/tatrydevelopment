@@ -1,14 +1,10 @@
 <?php
 
-namespace App\Model\Orm\Users;
+namespace App\Model\Orm;
 
-use App\Model\Orm\Roles\Role;
-use App\Model\Orm\Roles;
 use DateTimeImmutable;
-use Nextras\Orm\Collection\ICollection;
 use Nextras\Orm\Entity\Entity;
 use Nextras\Orm\Relationships\ManyHasMany;
-use Nextras\Orm\Relationships\OneHasMany;
 
 
 /**

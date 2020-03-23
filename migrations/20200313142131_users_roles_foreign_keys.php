@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class UsersRolesForeignKeysMigration extends AbstractMigration
+class UsersRolesForeignKeys extends AbstractMigration
 {
 	/**
 	* Migrate Up.
@@ -23,7 +23,8 @@ class UsersRolesForeignKeysMigration extends AbstractMigration
 	*/
 	public function down()
 	{
-
+		$this->query('ALTER TABLE `users_x_roles` DROP INDEX  `users_x_roles_user_id_fk`');
+		$this->query('ALTER TABLE `users_x_roles` DROP INDEX  `users_x_roles_role_id_fk`');
 	}
 
 }

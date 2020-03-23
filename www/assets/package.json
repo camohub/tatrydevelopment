@@ -5,9 +5,13 @@
 	"main": "index.js",
 	"dependencies": {
 		"bootstrap": "^3.4.1",
+		"bootstrap-datepicker": "^1.9.0",
+		"bootstrap-select": "^1.13.12",
+		"happy-inputs": "^2.0.4",
 		"jquery": "^3.4.1",
+		"jquery-sortable-lists": "^1.4.0",
 		"naja": "^1.7.0",
-		"ublaboo-datagrid": "^6.2.10"
+		"ublaboo-datagrid": "^6.2"
 	},
 	"devDependencies": {},
 	"scripts": {

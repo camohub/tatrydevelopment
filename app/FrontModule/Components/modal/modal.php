@@ -4,8 +4,24 @@ namespace App\Front\Components;
 
 
 use Nette\Application\UI\Control;
+use Nette\ComponentModel\Component;
 
 
+/**
+ * Class ModalControl
+ * @package App\Front\Components
+ *
+ * Pouzitie v presenteri
+ *
+ * public function actionSignIn()
+ * {
+ * 		$this['modal']->addContentComponent($this['signInForm']);
+ * 		$this->showModal = !$this->user->isLoggedIn();
+ * 		$this->setView('default');
+ * }
+ *
+ *
+ */
 class ModalControl extends Control
 {
 
@@ -28,7 +44,7 @@ class ModalControl extends Control
 	}
 
 
-	public function addContentComponent(Control $component)
+	public function addContentComponent(Component $component)
 	{
 		// Pôvodne som chcel predávať iba factory ale tam bol problém s predávaním parametrov do factory.
 		// Takto sa perametre predávajú v presentery

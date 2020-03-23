@@ -26,3 +26,10 @@ LESS/CSS/JS
 - settings/tools/file watchers
 - file watcher - nastavit na custom = adresár
 - npm packages - npm instal nette.ajax.js
+
+
+MODAL COMPONENT
+--------------------------------------
+- Musí sa volať cez action metodu - kôli handlerom formulárov
+- Presenter nastaví komponente premennú $showModal = TRUE/FALSE
+- Najlepšie je volať modl ajaxom

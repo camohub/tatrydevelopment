@@ -4,6 +4,7 @@ namespace App\Front\Components;
 
 
 use App\Model\Orm\Orm;
+use App\Presenters\BasePresenter;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Control;
 use Nextras\Orm\Mapper\Dbal\DbalCollection;
@@ -50,11 +51,13 @@ class DatagridUsersControl extends Control
 		$this->setName($grid, $cDomain);
 		$this->setEmail($grid, $cDomain);
 		$this->setRoles($grid, $cDomain);
-		$this->setActive($grid, $cDomain);
+		//$this->setActive($grid, $cDomain);
 		$this->setActive2($grid, $cDomain);
 		$this->setCreated($grid, $cDomain);
 		$this->setActionDelete($grid, $cDomain);
 		$this->setSum($grid, $cDomain);
+
+		Debugger::barDump(BasePresenter::$x);
 
 		return $grid;
 	}
@@ -110,7 +113,7 @@ class DatagridUsersControl extends Control
 	}
 
 
-	protected function setActive(DataGrid $grid, $cDomain)
+	/*protected function setActive(DataGrid $grid, $cDomain)
 	{
 		$grid->addColumnText('active', "$cDomain.active")
 			->setTemplateEscaping(FALSE)
@@ -122,14 +125,14 @@ class DatagridUsersControl extends Control
 			->setSortable()
 			->setFilterSelect([
 				2 => $this->translator->translate("$cDomain.activeAll"),
-				0 => $this->translator->translate("$cDomain.active1"),
+				0 => $this->translator->translate("$cDomain.active0"),
 				1 => $this->translator->translate("$cDomain.active1")
 			], 'active')
 			->setCondition(function ($collection, $value) {
 				// TODO: filter throws an error
 				if( (int)$value != 2 ) $collection->getQueryBuilder()->andWhere('active = %i', (int)$value);
 			});
-	}
+	}*/
 
 
 	protected function setActive2(DataGrid $grid, $cDomain)
@@ -141,6 +144,15 @@ class DatagridUsersControl extends Control
 			->addOption(false, "$cDomain.inactive")
 			->setClass('btn-danger')
 			->endOption()
+			->setFilterSelect([
+				2 => $this->translator->translate("$cDomain.activeAll"),
+				0 => $this->translator->translate("$cDomain.active0"),
+				1 => $this->translator->translate("$cDomain.active1")
+			], 'active')
+			->setCondition(function ($collection, $value) {
+				// TODO: filter throws an error??? Still alive????
+				if( (int)$value != 2 ) $collection->getQueryBuilder()->andWhere('active = %i', (int)$value);
+			})
 			->onChange[] = [$this, 'activeChange'];
 	}
 
@@ -188,10 +200,23 @@ class DatagridUsersControl extends Control
 
 	public function handleDeleteUser($id)
 	{
+		$presenter = $this->getPresenter();
+
 		if( $user = $this->orm->users->getById($id) )
 		{
 			$user->deleted = 'now';
 			$this->orm->users->persistAndFlush($user);
+		}
+
+		$presenter->flashSuccess('//components.usersDatagrid.deleteSuccess');
+
+		if ($presenter->isAjax())
+		{
+			$this['grid']->reload();
+		}
+		else
+		{
+			$presenter->redirect('this');
 		}
 	}
 }

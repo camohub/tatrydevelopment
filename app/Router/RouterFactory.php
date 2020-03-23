@@ -23,7 +23,7 @@ final class RouterFactory
 		$router[] = $adminRouter = new RouteList('Admin');
 		$router[] = $frontRouter = new RouteList('Front');
 
-		//$adminRouter->addRoute('admin/<presenter>/<action>[/<id>]', 'Default:default');
+		$adminRouter->addRoute('admin/<presenter>/<action>[/<id>]', 'Default:default');
 
 
 		$frontRouter->addRoute( '[<locale>/][<presenter>[/<action>]]',

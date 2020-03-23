@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Model\Orm\Roles;
+namespace App\Model\Orm;
 
 
-use App\Model\Orm\Users\User;
 use Nextras\Orm\Entity\Entity;
 use Nextras\Orm\Relationships\ManyHasMany;
 

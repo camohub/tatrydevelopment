@@ -21,12 +21,10 @@ function LoaderExtension(naja)
 	naja.addEventListener('complete', hideLoader.bind(this));
 
 	function showLoader() {
-		console.log('show1111111111111111111111111');
 		this.loader.style.display = 'block';
 	}
 
 	function hideLoader() {
-		console.log('hide1111111111111111111111111');
 		this.loader.style.display = 'none';
 	}
 

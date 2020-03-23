@@ -1,0 +1,118 @@
+
+{block content}
+
+{define title}Articles categories <a n:if="$user->isAllowed( 'article', 'add' )" class="btn btn-sm btn-success create-article-category"><i class="fa fa-plus"></i> Create new</a>{/define}
+
+{block otherScripts}
+	<script src="{$basePath}/assets/node_modules/jquery-sortable-lists/jquery-sortable-lists.min.js"></script>
+{/block}
+
+{include 'categories.js.latte'}
+
+<div class="row disp-none" id="article-category-form">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">Vytvoriť kategóriu</h3>
+			</div>
+			<div class="box-body">
+				{*{control articlesCategoryForm}*}
+
+				{*{form articlesCategoryForm, class => 'form-inline'}
+					<div class="form-group">
+						{label name}{/label}
+						{input name}
+					</div>
+					<div class="form-group">
+						*}{*{snippet create_parent}*}{*
+						{label parent_id}{/label}
+						{input parent_id}
+						*}{*{/snippet}*}{*
+					</div>
+					<div class="form-group">
+						{input sbmt}
+					</div>
+				{/form}*}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-md-10 col-lg-6">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">Editovať kategórie</h3>
+			</div>
+			<div class="box-body">
+				{snippetArea sortableList}
+				{block menu}
+					<ul n:class="!isset($nested) ? sortable-wrapper, sortable-list"{* $nested comes from recursion *}>
+						{foreach $categories as $item}
+							<li id="categoryItems_{$item->id}">
+								<div>
+									<div class="insert-zone"></div>
+									{* Dynamic snippet with dynamic form from multiplier. Snippet does not contain sub tree. *}
+									{var $id = 'editCategory-' . $item->id}
+									{snippet 'editCategory-' . $item->id}
+										<div class="actions">
+											<a n:href="changeArticlesCategoryVisibility! $item->id" n:class="ignore, ajax, fa, fa-md, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? fa-check-circle : fa-minus-circle, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? color-6 : color-7" title="Visible/Hidden"> </a>
+											<a n:href=":Admin:Categories:categories $item->id" class="ignore xajax fa fa-md fa-pencil color-6 " title="Edit"> </a>
+											<a n:href="deleteArticleCategory! $item->id" {if !$presenter->isAjax()}style="display:none"{/if} class="ignore fa fa-md fa-trash-o color-7" title="Delete"> </a>
+										</div>
+
+										<div class="category-name">{$item->name}</div>
+									{/snippet}
+								</div>
+
+								{if ! $presenter->isAjax()}
+									{if $categories = $item->adminCategories }
+										{include menu, section => $categories, nested => 1}
+									{/if}
+								{/if}
+							</li>
+						{/foreach}
+					</ul>
+				{/block}
+				{/snippetArea}
+
+				{snippet sortableListsScript}
+					{* Script is in snippet cause ajax renders new list without activ sortableLists *}
+					<script>
+						$( '.sortable-wrapper' ).sortableLists( {
+							placeholderClass: 'placeholder',
+							hintClass: 'hint',
+							ignoreClass: 'ignore',
+							opener: {
+								active: true,
+								as: 'html',  // or "class" or skip if using background-image url
+								close: '<i class="fa fa-minus c7"></i>', // or 'fa fa-minus' or './imgs/Remove2.png'
+								open: '<i class="fa fa-plus c3"></i>', // or 'fa fa-plus' or './imgs/Add2.png'
+								openerCss: {
+									'position': 'absolute',
+									'top': 9,
+									'left': 20,
+									'cursor': 'pointer',
+									'z-index': 1000
+								}
+							}
+						} );
+
+						$( '.fa-trash-o' ).css( {'display': 'inline-block'} );  // I do not want to display this function if js (confirm dialog) is off
+
+						$( '.sortable-wrapper' ).on( 'click', '.fa-pencil', function () {
+							$( this ).closest( 'li' ).find( 'form' ).first().slideToggle();
+						});
+
+					</script>
+				{/snippet}
+
+				<a n:href="categoriesArticlesPriority!" class="save-categories ajax btn btn-primary btn-sm xs-mar-top-15">Uložiť zmeny</a>
+			</div>
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+</div>

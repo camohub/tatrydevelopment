@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Orm\Datagrids;
+namespace App\Model\Orm;
 
 use DateTimeImmutable;
 use Nextras\Orm\Collection\ICollection;

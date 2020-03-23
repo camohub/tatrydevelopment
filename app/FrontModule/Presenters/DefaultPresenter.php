@@ -19,9 +19,6 @@ use Tracy\Debugger;
 class DefaultPresenter extends BasePresenter
 {
 
-	/** @var  Context @inject */
-	public $database;
-
 	/** @var  ITestControlFactory @inject */
 	public $testControlFactory;
 
@@ -30,9 +27,6 @@ class DefaultPresenter extends BasePresenter
 
 	/** @var  IDatagridUsersControlFactory @inject */
 	public $datagridUsersControlFactory;
-
-	/** @var  Orm @inject */
-	public $orm;
 
 
 	public function actionDefault()
@@ -52,7 +46,13 @@ class DefaultPresenter extends BasePresenter
 
 	public function renderTest()
 	{
-		$this->user->logout();
+		$products = $this->orm->products->findAll();
+
+		foreach ($products as $p)
+		{
+			Debugger::barDump($p->name, 'name');
+		}
+		//$this->user->logout();
 	}
 
 

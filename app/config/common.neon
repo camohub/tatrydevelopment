@@ -34,11 +34,17 @@ services:
 	authorizatorFactory: App\Model\AuthorizatorFactory
 	authorizator: @authorizatorFactory::create
 
+	#SERVICES
+	- App\Model\Services\CategoriesService
+
+	#COMPONENTS
 	- App\Front\Components\IModalControlFactory
 	- App\Front\Components\ITestControlFactory
+	- App\Admin\Components\IAdminEshopMenuControlFactory
 
 	#FORMS
 	- App\Front\Components\ISignInFormControlFactory
+	- App\Admin\Forms\ICategoryNameFormControlFactory
 
 	#DATAGRIDS
 	- App\Front\Components\IDatagridTestControlFactory

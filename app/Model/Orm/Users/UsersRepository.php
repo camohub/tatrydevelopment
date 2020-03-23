@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Orm\Users;
+namespace App\Model\Orm;
 
 
 use Nextras\Orm\Repository\Repository;

@@ -1,0 +1,17 @@
+
+{form form, class => 'no-ajax'}
+	<div n:if="$form->hasErrors()" class="alert alert-danger">
+		{foreach $form->getErrors() as $e}{$e}<br>{/foreach}
+	</div>
+
+	{formContainer names}
+		<div n:foreach="$formContainer->getComponents() as $i" class="form-group">
+			{label $i /}&nbsp;{input $i, class => 'form-control'}
+		</div>
+	{/formContainer}
+
+	<div class="form-group">
+		{input id}
+		{input sbmt, class => 'btn btn-primary btn-sm ignore'}
+	</div>
+{/form}

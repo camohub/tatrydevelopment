@@ -17,3 +17,6 @@ datagridUsers:
 	active0: neaktívny
 	delete: Zmazať
 	confirmDelete: Naozaj chcete zmazať záznam %s?
+	deleteSuccess: Položka bola zmazaná
+
+eshopMenu:
