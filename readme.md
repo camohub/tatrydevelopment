@@ -33,3 +33,9 @@ MODAL COMPONENT
 - Musí sa volať cez action metodu - kôli handlerom formulárov
 - Presenter nastaví komponente premennú $showModal = TRUE/FALSE
 - Najlepšie je volať modl ajaxom
+- Nieje treba volať `$this['modal']->redrawControl()` 
+		volá sa vždy tak ako $this->redrawControl('flash')
+		
+AJAX
+---------------------------------------
+- data-naja-history => "off" - zabráni ukladaniu adries do historie - form button

@@ -1,6 +1,95 @@
 
 {block content}
 
-<h2>Kategorie</h2>
+{block otherScripts}
+	<script src="{$basePath}/assets/node_modules/jquery-sortable-lists/jquery-sortable-lists.min.js"></script>
+	{*<script src="{$basePath}/assets/node_modules/jquery-sortable-lists/jquery-sortable-lists.js"></script>*}
+{/block}
 
-{control adminEshopCategories}
+{include 'default.js.latte'}
+
+<div class="row disp-none" id="article-category-form">
+	<div class="col-xs-12">
+		<a n:href=":Admin:Categories:default createForm => true" data-naja-history="off" class="ajax btn btn-primary">Vytvoriť kategóriu</a>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-md-10 col-lg-6">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">Editovať kategórie</h3>
+			</div>
+			<div class="box-body">
+				{snippet sortableList}
+					{block menu}
+						<ul n:class="!isset($nested) ? sortable-wrapper, sortable-list"{* $nested comes from recursion *}>
+							{foreach $categories as $item}
+								<li id="categoryItems_{$item->id}">
+									<div>
+										<div class="insert-zone"></div>
+										<div class="actions">
+											<a n:href="changeCategoryVisibility! $item->id" n:class="ignore, ajax, fa, fa-lg, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? fa-check-square : fa-minus-square, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? color-6 : color-7" title="Visible/Hidden"> </a>
+											<a n:href=":Admin:Categories:default $item->id" class="ignore ajax fa fa-lg fa-pen-square color-6" data-naja-history="off" title="Edit"> </a>
+											<a n:href="deleteCategory! $item->id" {if !$presenter->isAjax()}style="display:none"{/if} class="ignore fa-stack color-7 color-7 trash" title="Delete">
+												<i class="ignore fas fa-square fa-stack-2x"></i>
+												<i class="ignore fas fa-trash-alt fa-stack-1x color-1"></i>
+											</a>
+										</div>
+
+										<div class="category-name">{$item->name}</div>
+									</div>
+
+									{if $categories = $item->adminCategories->fetchAll() }
+										{include menu, section => $categories, nested => 1}
+									{/if}
+								</li>
+							{/foreach}
+						</ul>
+					{/block}
+
+					{* Script is in snippet cause ajax renders new list without activ sortableLists *}
+					<script>
+						$( '.sortable-wrapper' ).sortableLists( {
+							placeholderClass: 'placeholder',
+							hintClass: 'hint',
+							ignoreClass: 'ignore',
+							opener: {
+								active: true,
+								as: 'html',  // or "class" or skip if using background-image url
+								close: '<i class="fa fa-minus c7"></i>', // or 'fa fa-minus' or './imgs/Remove2.png'
+								open: '<i class="fa fa-plus c3"></i>', // or 'fa fa-plus' or './imgs/Add2.png'
+								openerCss: {
+									'position': 'absolute',
+									'top': 9,
+									'left': 20,
+									'cursor': 'pointer',
+									'z-index': 1000
+								}
+							}
+						} );
+
+						///////////////////////////////////////////////////////////////////////
+						////// DELETE BTN HAS TO BE HERE IN SNIPPET //////////////////////////
+						/////////////////////////////////////////////////////////////////////
+						$('.sortable-wrapper').on('click', '.trash', function()
+						{
+							return confirm( 'Naozaj chcete kategóriu zmazať?' );
+						});
+
+						// I do not want to display this function if js (confirm dialog) is off
+						$( '.trash' ).css('display', 'inline-block');
+					</script>
+				{/snippet}
+
+				<div class="mar-3 text-right">
+					<a n:href="categoriesPriority!" class="save-categories ajax btn btn-primary btn-sm">Uložiť zmeny</a>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+

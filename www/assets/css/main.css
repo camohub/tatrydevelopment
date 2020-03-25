@@ -103,18 +103,19 @@ small {
 }
 .flash-box {
   position: absolute;
-  top: 200px;
-  left: 0;
-  width: 100%;
+  top: 50px;
+  left: 50%;
   z-index: 10000;
+  width: 100%;
+}
+@media (min-width: 750px) {
+  .flash-box {
+    width: 700px;
+    margin-left: -350px;
+  }
 }
 .flash-box .alert {
   margin: 15px auto;
-}
-@media (min-width: 750px) {
-  .flash-box .alert {
-    width: 700px;
-  }
 }
 .alert {
   font-size: 14px;
@@ -152,4 +153,30 @@ small {
   font-size: 18px;
   font-family: Verdana;
   color: #444;
+}
+.mar-1 {
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+.mar-2 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.mar-3 {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+.mar-4 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.mar-5 {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+.mar-t-1 {
+  margin-top: 7px;
+}
+.mar-t-2 {
+  margin-top: 10px;
 }

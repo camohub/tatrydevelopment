@@ -6,7 +6,6 @@ namespace App\AdminModule\Presenters;
 
 use App;
 use App\Admin\Components\IAdminEshopMenuControlFactory;
-use Nette;
 use App\AdminModule\Forms\CategoriesEditFormFactory;
 use App\AdminModule\Forms\CategoryFormFactory;
 use Tracy\Debugger;
@@ -21,6 +20,9 @@ class CategoriesPresenter extends BaseAdminPresenter
 	/** @var  App\Admin\Forms\ICategoryNameFormControlFactory @inject */
 	public $categoryNameFormFactory;
 
+	/** @var  App\Admin\Forms\ICategoryCreateFormControlFactory @inject */
+	public $categoryCreateFormFactory;
+
 	/** @var  IAdminEshopMenuControlFactory @inject */
 	public $adminEshopCategoriesFactory;
 
@@ -34,28 +36,20 @@ class CategoriesPresenter extends BaseAdminPresenter
 	}
 
 
-	public function actionDefault()
-	{
-		$categories = $this->orm->categories->findAll()->fetchAll();
-		$this->template->categories = $categories;
-	}
-
-
-	public function actionCategories( $id = NULL )
+	public function actionDefault( $id = NULL, $delete = FALSE, $createForm = FALSE )
 	{
 		$this->template->categories = $this->orm->categories->findAdminTopCategories();
 
-		if( $id )
+		if( $id && ! $delete )
 		{
 			$this->id = (int)$id;
 			$this->showModal = TRUE;
-			$this['modal']->addContentComponent($this['editCategoryNameForm']);
-			$this->setView('categories');
-
-			if( $this->isAjax() )
-			{
-				$this->redrawControl('modal');
-			}
+			$this['modal']->addContent($this['editCategoryNameForm']);
+		}
+		elseif( $createForm )
+		{
+			$this->showModal = TRUE;
+			$this['modal']->addContent($this['categoryCreateForm']);
 		}
 	}
 
@@ -63,17 +57,17 @@ class CategoriesPresenter extends BaseAdminPresenter
 	/**
 	 * @secured
 	 */
-	public function handleCategoriesArticlesPriority()
+	public function handleCategoriesPriority()
 	{
 		try
 		{
-			$this->categoriesArticlesService->updatePriority( $_GET['categoryItems'] );
-			$this->flashMessage( 'Poradie položiek bolo upravené.' );
+			$this->categoriesService->updatePriority( $_GET['categoryItems'] );
+			$this->flashSuccess('Poradie položiek bolo upravené.');
 		}
 		catch ( \Exception $e )
 		{
-			Debugger::log( $e->getMessage() . ' @ in file ' . __FILE__ . ' on line ' . __LINE__, 'error' );
-			$this->flashMessage( 'Pri ukladaní údajov došlo k chybe.', 'error' );
+			Debugger::log($e);
+			$this->flashMessage('Pri ukladaní údajov došlo k chybe.', 'error');
 		}
 
 		if ( $this->isAjax() )
@@ -91,7 +85,7 @@ class CategoriesPresenter extends BaseAdminPresenter
 	 * @param $id
 	 * @throws App\Exceptions\AccessDeniedException
 	 */
-	public function handleChangeArticlesCategoryVisibility( $id )
+	public function handleChangeCategoryVisibility( $id )
 	{
 		$category = $this->categoryArticleRepository->find( $id );
 
@@ -104,7 +98,7 @@ class CategoriesPresenter extends BaseAdminPresenter
 		}
 		catch ( \Exception $e )
 		{
-			Debugger::log( $e->getMessage(), 'error' );
+			Debugger::log($e);
 			$this->flashMessage( 'Pri ukladaní údajov došlo k chybe.', 'error' );
 		}
 
@@ -125,33 +119,25 @@ class CategoriesPresenter extends BaseAdminPresenter
 	 * @param $id
 	 * @throws App\Exceptions\AccessDeniedException
 	 */
-	public function handleDeleteArticleCategory( $id )
+	public function handleDeleteCategory( $id )
 	{
-		$category = $this->categoryArticleRepository->find( $id );
+		$this->showModal = FALSE;
+		$category = $this->orm->categories->getById( $id );
 
 		try
 		{
-			$names = $result = $this->categoriesArticlesService->delete( $category );
-			$this->articlesCategories = $this->categoryArticleRepository->findBy( ['parent_id' => NULL], ['priority' => 'ASC'] );
-			$this->flashMessage( 'Category ' . join( ', ', $names ) . ' have been deleted.' );
+			$names = $result = $this->categoriesService->delete( $category );
+			$this->template->categories = $this->orm->categories->findAdminTopCategories();
+			$this->flashMessage( 'Categória ' . join( ', ', $names ) . ' bola zmazaná.' );
 		}
-		catch ( App\Model\Services\NoArticleException $e )
-		{
-			return;
-		}
-		catch ( App\Model\Services\PartOfAppException $e )
-		{
-			$this->flashMessage( $e->getMessage(), 'error' );
-			return;
-		}
-		catch ( App\Model\Services\ContainsArticleException $e )
+		catch ( App\Exceptions\CategoryContainsProductsException $e )
 		{
 			$this->flashMessage( $e->getMessage(), 'error' );
 			return;
 		}
 		catch ( \Exception $e )
 		{
-			Debugger::log( $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine() );
+			Debugger::log($e);
 			$this->flashMessage( 'Pri ukladaní údajov došlo k chybe.', 'error' );
 			return;
 		}
@@ -159,11 +145,10 @@ class CategoriesPresenter extends BaseAdminPresenter
 		if ( $this->isAjax() )  // Not used for now.
 		{
 			$this->redrawControl( 'sortableList' );
-			$this->redrawControl( 'flash' );
 			return;
 		}
 
-		$this->redirect( ':Admin:Categories:articlesCategories' );
+		$this->redirect( ':Admin:Categories:default' );
 
 	}
 
@@ -179,6 +164,12 @@ class CategoriesPresenter extends BaseAdminPresenter
 	public function createComponentEditCategoryNameForm()
 	{
 		return $this->categoryNameFormFactory->create( $this->id );
+	}
+
+
+	public function createComponentCategoryCreateForm()
+	{
+		return $this->categoryCreateFormFactory->create();
 	}
 
 }

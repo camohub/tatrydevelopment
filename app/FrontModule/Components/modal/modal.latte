@@ -7,7 +7,7 @@
 				<h4 class="modal-title">{_$title}</h4>
 			</div>
 			<div class="modal-body">
-				{control contentComponent}
+				{if $showModal}{control contentComponent}{/if}
 			</div>
 			{*<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -17,8 +17,11 @@
 	</div>
 </div>
 
-<script>
-	$(function() {
-		$('#baseModal').modal('show');
-	});
-</script>
+{* This script snippet also runs on ajax request *}
+<div n:snippet="modalScript" style="display: none">
+	<script>
+		$(function() {
+			{$showModal} ? $('#baseModal').modal('show') : $('#baseModal').modal('hide');
+		});
+	</script>
+</div>

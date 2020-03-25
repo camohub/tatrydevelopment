@@ -5,6 +5,7 @@ namespace App\Front\Components;
 
 use Nette\Application\UI\Control;
 use Nette\ComponentModel\Component;
+use Tracy\Debugger;
 
 
 /**
@@ -15,11 +16,19 @@ use Nette\ComponentModel\Component;
  *
  * public function actionSignIn()
  * {
- * 		$this['modal']->addContentComponent($this['signInForm']);
  * 		$this->showModal = !$this->user->isLoggedIn();
+ * 		$this['modal']->addContentComponent($this['signInForm']);
  * 		$this->setView('default');
  * }
  *
+ * Pouzitie v presenteri s ajaxom
+ *
+ * 	public function actionCategories( $id = NULL )
+ * {
+ *		$this->showModal = TRUE;
+ * 		$this['modal']->addContentComponent($this['editCategoryNameForm']);
+ * 		if( $this->isAjax() ) $this['modal']->redrawControl();  // Toto nieje treba. Vola sa v BasePresenter::beforeRender()
+ * }
  *
  */
 class ModalControl extends Control
@@ -37,6 +46,7 @@ class ModalControl extends Control
 	public function render()
 	{
 		$this->template->setFile(__DIR__ . '/modal.latte');
+		$this->template->showModal = $this->presenter->showModal;
 		$this->template->title =  $this->getComponent('contentComponent', FALSE)
 			? ($this['contentComponent']->modalTitle ?? '')
 			: '';
@@ -44,7 +54,7 @@ class ModalControl extends Control
 	}
 
 
-	public function addContentComponent(Component $component)
+	public function addContent(Component $component)
 	{
 		// Pôvodne som chcel predávať iba factory ale tam bol problém s predávaním parametrov do factory.
 		// Takto sa perametre predávajú v presentery

@@ -4,6 +4,7 @@ namespace App\Admin\Forms;
 
 
 use App\Exceptions\DuplicateEntryException;
+use App\Model\Orm\Category;
 use App\Model\Orm\Orm;
 use App\Model\Services\CategoriesService;
 use Kdyby\Translation\Translator;
@@ -55,6 +56,7 @@ class CategoryNameFormControl extends Control
 
 		$names = $form->addContainer( 'names' );
 
+		/** @var Category $category */
 		$category = $this->orm->categories->getById( $this->id );
 
 		foreach ( $category->langs as $lang )
@@ -80,28 +82,19 @@ class CategoryNameFormControl extends Control
 		$presenter = $form->getPresenter();
 		$values = $presenter->isAjax() ? $form->getHttpData() : $form->getValues();
 
-		if ( $presenter->isAjax() ) // Is before try block cause catch returns
-		{
-			$presenter->redrawControl( 'sortableList' );
-			$presenter->redrawControl( 'sortableListScript' );
-			$presenter->redrawControl( 'flash' );
-			// If need rewrite ONE dynamic snippet, template needs to get ONLY THIS ONE. Render method in presenter sets this value.
-			$presenter->articlesCategories = $this->orm->categories->getById( $values['id'] );
-		}
-
 		try
 		{
-			$this->categoriesService->updateName( $values->id, (array)$values->names );
+			$this->categoriesService->updateName( $values['id'], (array)$values['names'] );
 		}
 		catch ( DuplicateEntryException $e )
 		{
-			$presenter->flashMessage( 'Kategória s vybraným názvom už existuje. Názov musí byť unikátny pre každý jazyk.', 'error' );
+			$form->addError( 'Kategória s vybraným názvom už existuje. Názov musí byť unikátny pre každý jazyk.', 'error' );
 			return $form;
 		}
 		catch ( \Exception $e )
 		{
 			Debugger::log($e);
-			$presenter->flashMessage( 'Pri ukladaní údajov došlo k chybe. ', 'error' );
+			$form->addError( 'Pri ukladaní údajov došlo k nečakanej chybe. Skúste to prosím ešte raz, alebo kontaktujte administrátora', 'error' );
 			return $form;
 		}
 
@@ -109,10 +102,12 @@ class CategoryNameFormControl extends Control
 
 		if ( $presenter->isAjax() )
 		{
+			$presenter->showModal = FALSE;
+			$presenter->redrawControl( 'sortableList' );
 			return;
 		}
 
-		$presenter->redirect( ':Admin:Categories:categories' );
+		$presenter->redirect( ':Admin:Categories:default' );
 	}
 
 }

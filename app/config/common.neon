@@ -45,6 +45,7 @@ services:
 	#FORMS
 	- App\Front\Components\ISignInFormControlFactory
 	- App\Admin\Forms\ICategoryNameFormControlFactory
+	- App\Admin\Forms\ICategoryCreateFormControlFactory
 
 	#DATAGRIDS
 	- App\Front\Components\IDatagridTestControlFactory

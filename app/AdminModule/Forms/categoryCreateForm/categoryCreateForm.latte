@@ -1,5 +1,5 @@
 
-{form form, class => 'ajax', data-naja-history => "off", id => 'categoryNameForm'}
+{form form, class => 'ajax', data-naja-history => "off", id => 'createCategoryForm'}
 	<div n:if="$form->hasErrors()" class="alert alert-danger">
 		{foreach $form->getErrors() as $e}{$e}<br>{/foreach}
 	</div>
@@ -11,7 +11,10 @@
 	{/formContainer}
 
 	<div class="form-group">
-		{input id}
-		{input sbmt, data-naja-history => "off", class => 'btn btn-primary btn-sm ignore'}
+		{label parent /} {input parent, class=>'selectpicker form-control'}
+	</div>
+
+	<div class="form-group">
+		{input sbmt, id => 'categoryCreateFormSubmit', data-naja-history => "off", class => 'btn btn-primary btn-sm ignore'}
 	</div>
 {/form}

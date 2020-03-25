@@ -59,6 +59,7 @@ class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		parent::beforeRender();
 		$this->redrawControl('flash');
+		$this['modal']->redrawControl();
 
 		$this->template->showModal = $this->showModal;
 

@@ -16,7 +16,7 @@
 	<link rel="stylesheet" type="text/css" href="{$basePath}/assets/node_modules/ublaboo-datagrid/assets/datagrid-spinners.css">
 	<link rel="stylesheet" type="text/css" href="{$basePath}/assets/node_modules/bootstrap-select/dist/css/bootstrap-select.min.css">
 	<link href="https://fonts.googleapis.com/css?family=Cinzel:900" rel="stylesheet">
-	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" rel="stylesheet">
 	<link href="{$basePath}/assets/css/main.min.css" rel="stylesheet">
 	<link href="{$basePath}/assets/css/admin.min.css" rel="stylesheet">
 
@@ -47,7 +47,6 @@
 	<ul>
 		<li><a n:href=":Front:Default:default">Homepage</a></li>
 		<li><a n:href=":Admin:Categories:default">Kategórie</a></li>
-		<li><a n:href=":Admin:Categories:categories">Kategórie 2</a></li>
 	</ul>
 </div>
 
@@ -69,7 +68,7 @@
 	</div>
 </div>
 
-{if $showModal}{control modal}{/if}
+{control modal}
 
 {block scripts}
 	{*<script src="https://nette.github.io/resources/js/3/netteForms.min.js"></script>*}

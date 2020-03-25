@@ -115,17 +115,18 @@ small {
 
 .flash-box {
 	position: absolute;
-	top: 200px;
-	left: 0;
-	width: 100%;
+	top: 50px;
+	left: 50%;
 	z-index: 10000;
+	width: 100%;
+
+	@media (min-width: 750px) {
+		width: 700px;
+		margin-left: -350px;
+	}
 
 	.alert {
 		margin: 15px auto;
-
-		@media (min-width: 750px) {
-			width: 700px;
-		}
 	}
 }
 
@@ -172,3 +173,9 @@ small {
 	font-family: Verdana;
 	color: #444;
 }
+
+
+
+
+
+@import "margins-paddings.less";

@@ -28,7 +28,7 @@ a.color-7 {
 }
 .color-8,
 a.color-8 {
-  color: #686568;
+  color: #7d7a7d;
 }
 .color-9,
 a.color-9 {
@@ -64,7 +64,7 @@ a.color-11 {
   background-color: #b63c3c;
 }
 .bg-color-8 {
-  background-color: #686568;
+  background-color: #7d7a7d;
 }
 .bg-color-9 {
   background-color: #a94442;
@@ -80,17 +80,21 @@ a.color-11 {
   margin: 0;
   padding: 0;
   list-style-type: none;
+  border-top: 1px solid #7d7a7d;
+  border-bottom: 1px solid #7d7a7d;
 }
 #sortableListsBase ul,
 .sortable-list ul {
   padding: 0;
   margin-left: 80px;
+  border-top: none;
+  border-bottom: none;
 }
 #sortableListsBase li,
 .sortable-list li {
   margin: 0;
   padding: 0;
-  background-color: #686568;
+  background-color: #7d7a7d;
   list-style-type: none;
   cursor: move;
 }
@@ -99,7 +103,7 @@ a.color-11 {
   padding: 7px;
   padding-left: 90px;
   background-color: #fff;
-  border: 2px solid #686568;
+  border: 1px solid #7d7a7d;
   position: relative;
 }
 #sortableListsBase li > div .insert-zone,
@@ -120,12 +124,12 @@ a.color-11 {
 #sortableListsBase .placeholder,
 .sortable-list .placeholder {
   background-color: #d2ffd4;
-  border: 2px solid #686568;
+  border: 1px solid #7d7a7d;
 }
 #sortableListsBase .hint,
 .sortable-list .hint {
   background-color: #fff7bf;
-  border: 2px solid #686568;
+  border: 1px solid #7d7a7d;
 }
 html {
   height: 100%;
@@ -144,6 +148,7 @@ body {
   font-family: "Helvetica Neue", Arial, sans-serif;
   background-color: #fff;
   color: #333;
+  font-size: 18px;
 }
 #left-menu {
   position: absolute;
@@ -194,4 +199,19 @@ body {
   background-color: #efefef;
   text-align: left;
   font-size: 14px;
+}
+.fa-stack {
+  font-size: 0.665em;
+  height: 2.3em;
+}
+.fa-stack i {
+  vertical-align: middle;
+}
+a.btn {
+  color: #fff;
+}
+a.btn:visited,
+a.btn:active,
+a.btn:hover {
+  color: #fff;
 }

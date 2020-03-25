@@ -5,8 +5,10 @@ namespace App\Model\Services;
 
 
 use App;
+use App\Exceptions\CategoryContainsProductsException;
 use App\Model\Entity;
 use App\Model\Orm\Category;
+use App\Model\Orm\CategoryLang;
 use App\Model\Orm\Orm;
 use App\Model\Repositories\ArticlesRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -121,28 +123,26 @@ class CategoriesService
 
 	/**
 	 * @desc produces an array of categories in format required by form->select
-	 * @param array $arr
+	 * @param array $cats
 	 * @param array $result
 	 * @param int $lev
 	 * @return array
 	 */
-	public function categoriesToSelect( $arr = [], $result = [], $lev = 0 )
+	public function categoriesToSelect( $cats = NULL, $result = [], $lev = 0 )
 	{
-		if ( ! $arr )  // First call.
+		if ( ! $cats )  // First call.
 		{
-			$arr = $this->categoryArticleRepository->findBy( [ 'parent_id =' => NULL ], [ 'priority' => 'ASC' ] );
+			$cats = $this->orm->categories->findAdminTopCategories();
 		}
 
-		foreach ( $arr as $item )
+		/** @var Category $item */
+		foreach ( $cats as $item )
 		{
-			if ( $item->getId() != Entity\CategoryArticle::CATEGORY_NEWS )  // Najnovšie is not optional value
-			{
-				$result[$item->getId()] = str_repeat( '>', $lev * 1 ) . $item->getDefaultLang()->getTitle();
-			}
+			$result[$item->id] = str_repeat( '--', $lev * 1 ) . '   ' . $item->name;
 
-			if ( $arr = $this->categoryArticleRepository->findBy( [ 'parent_id =' => $item->getId() ], [ 'priority' => 'ASC' ] ) )
+			if ( $item->adminCategories->countStored() )
 			{
-				$result = $this->categoriesToSelect( $arr, $result, $lev + 1 );
+				$result = $this->categoriesToSelect( $item->adminCategories, $result, $lev + 1 );
 			}
 		}
 
@@ -151,57 +151,48 @@ class CategoriesService
 
 
 	/**
-	 * @param \ArrayAccess $params
+	 * @param array $params
 	 * @return Category
 	 * @throws App\Exceptions\DuplicateEntryException
 	 * @throws \Exception
 	 */
-	public function createCategory( \ArrayAccess $params )
+	public function createCategory( array $params )
 	{
 		//$this->em->beginTransaction();
 
 		try
 		{
-			$same_level_categories = $this->orm->categories->findBy( [ 'parent' => $params['parent'] ] );
+			$parent = $params['parent'] ? (int)$params['parent'] : NULL;
+			$same_level_categories = $this->orm->categories->findBy( [ 'parent' => $parent ] );
 			foreach ( $same_level_categories as $cat )
 			{
-				$cat->order = $cat->order + 1;
+				$cat->priority = $cat->priority + 1;
 				$this->orm->categories->persistAndFlush( $cat );
 			}
 
 			$category = new Category();
-			$category->parent = isset( $params['parent_id'] ) ? $this->orm->categories->getById( $params['parent_id'] ) : NULL;
+			$category->parent = isset( $params['parent'] ) ? $this->orm->categories->getById( $params['parent'] ) : NULL;
 			$category->status = Category::STATUS_UNPUBLISHED;
-			$category->setUrl( ':Front:Articles:show' );
-			$this->em->flush( $category );
+			$this->orm->categories->persist($category);
 
-
-			$langs = $this->langRepository->findBy( [], ['id' => 'ASC'] );
-			foreach ( $langs as $lang )
+			foreach ( $this->translator->getAvailableLocales() as $lang )
 			{
-				$category_lang = new App\Model\Entity\CategoryArticleLang();
-				$this->em->persist( $category_lang );
-				$category_lang->setCategory( $category );
-				$category_lang->setLang( $lang );
-				$category_lang->setTitle( $params['titles'][$lang->getCode()] );
-				$category->addLang( $category_lang );
-				$this->em->flush( $category_lang );
+				$lang = strtolower(explode('_', $lang)[0]);
+
+				$category_lang = new CategoryLang();
+				$category_lang->name = $params['names'][$lang];
+				$category_lang->lang = $lang;
+				$this->orm->categoriesLangs->persist($category_lang);
+				$category->langs->add($category_lang);
 			}
 
+			$this->orm->categories->persistAndFlush( $category );
 		}
-		catch ( UniqueConstraintViolationException $e )
+		catch ( \Nextras\Dbal\UniqueConstraintViolationException $e )
 		{
-			$this->em->rollback();
-			throw new App\Exceptions\DuplicateEntryException( 'Kategória so zadaným názvom už exituje. Názov musí byť unikátny pre každý jazyk.' );
-		}
-		catch ( \Exception $e )
-		{
-			$this->em->rollback();
-			Debugger::log( $e->getMessage() . ' @ in file ' . __FILE__ . ' on line ' . __LINE__, 'error' );
-			throw $e;
+			throw new App\Exceptions\DuplicateEntryException();
 		}
 
-		$this->em->commit();
 		return $category;
 	}
 
@@ -240,17 +231,20 @@ class CategoriesService
 	 */
 	public function updatePriority( array $arr )
 	{
-		$pairs = $this->categoryArticleRepository->findAssoc( 'id' );
+		$pairs = $this->orm->categories->findAll()->fetchPairs('id');
 		$i = 1;
 		foreach ( $arr as $key => $val )
 		{
-			// if the array is large it would be better to update only changed items
-			$pairs[(int) $key]->setParentId( $val == 0 ? NULL : (int) $val );
-			$pairs[(int) $key]->setPriority( $i );
+			// if the array is large it would be better to update only changed items but the problem is priority
+			$category = $pairs[(int)$key];
+			$category->parent = $val == 0 ? NULL : (int)$val;
+			$category->priority = $i;
+
+			$this->orm->categories->persistAndFlush($category);
+
 			$i++;
 		}
 
-		$this->em->flush();
 		$this->cleanCache();
 
 		return true;
@@ -258,39 +252,24 @@ class CategoriesService
 
 
 	/**
-	 * @param $category
+	 * @param Category $category
 	 * @return array
-	 * @throws ContainsArticleException
 	 * @throws NoCategoryException
-	 * @throws PartOfAppException
 	 */
-	public function delete( Entity\CategoryArticle $category )
+	public function delete( Category $category )
 	{
-		if( ! $category )
-		{
-			throw new NoCategoryException( 'Category not found.' );
-		}
+		if( ! $category ) throw new NoCategoryException( 'Category not found.' );
 
 		$result = $this->canDelete( $category );
 
-		if ( isset( $result['app_error'] ) )
-		{
-			throw new PartOfAppException( 'Category can not be deleted because category ' . $result['app_error'] . ' is native part of application and can not be deleted.' );
-		}
-		if ( isset( $result['articles_error'] ) )
-		{
-			throw new ContainsArticleException( 'Category can not be deleted because category ' . $result['articles_error'] . ' contains one or more articles.' );
-		}
-
 		$names = [];
-
 		foreach ( $result['items'] as $item )
 		{
-			$names[] = $item->getDefaultLang()->getTitle();
-			$this->em->remove( $item );
+			$names[] = $item->name;
+			$this->orm->categories->remove( $item );
 		}
 
-		$this->em->flush();
+		$this->orm->categories->flush();
 
 		$this->cleanCache();
 
@@ -301,38 +280,26 @@ class CategoriesService
 
 	public function cleanCache()
 	{
-		$langs = $this->langRepository->findAll();
-		foreach ( $langs as $lang )
-		{
-			$this->cache->clean( [ Nette\Caching\Cache::TAGS => [ self::CACHE_TAG . $lang->getCode()/*, 'is_in_cache'*/ ] ] );
-		}
-
+		$langs = $this->translator->getAvailableLocales();
+		foreach ( $langs as $lang ) $this->cache->clean( [ Nette\Caching\Cache::TAGS => [ self::CACHE_TAG . $lang ] ] );
 	}
 
 
 //////Protected/Private///////////////////////////////////////////////////////
 
 	/**
-	 * @param Entity\CategoryArticle $category
+	 * @param Category $category
 	 * @param null $result
 	 * @return array|null
+	 * @throws CategoryContainsProductsException
 	 */
-	protected function canDelete( Entity\CategoryArticle $category, $result = NULL )
+	protected function canDelete( Category $category, $result = NULL )
 	{
 		$result = $result ?: [ 'items' => [] ];
 
-		if ( $category->getArticles()->count() )
-		{
-			$result = [ 'articles_error' => $category->getDefaultLang()->getTitle() ];
-			return $result;
-		}
-		if ( $category->getApp() )
-		{
-			$result = [ 'app_error' => $category->getDefaultLang()->getTitle() ];
-			return $result;
-		}
+		if ( $category->products->countStored() ) throw new CategoryContainsProductsException('Category ' . $category->name . ' can not be deleted. Category contains one or more products.', $category->name);
 
-		foreach ( $category->getChildren() as $child )
+		foreach ( $category->categories as $child )
 		{
 			$result = $this->canDelete( $child, $result );
 		}
@@ -349,11 +316,6 @@ class CategoriesService
 class PartOfAppException extends \Exception
 {
 	// Entity or nested entity is part of application and so it can not be deleted
-}
-
-class ContainsArticleException extends \Exception
-{
-	// Entity or nested entity contains one or more articles and so it can not be deleted.
 }
 
 class NoArticleException extends \Exception

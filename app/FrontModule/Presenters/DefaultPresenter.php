@@ -58,7 +58,7 @@ class DefaultPresenter extends BasePresenter
 
 	public function actionSignIn()
 	{
-		$this['modal']->addContentComponent($this['signInForm']);
+		$this['modal']->addContent($this['signInForm']);
 		$this->showModal = !$this->user->isLoggedIn();
 		$this->setView('default');
 	}

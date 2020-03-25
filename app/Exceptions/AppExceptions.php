@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Nette;
 
 
@@ -40,7 +41,21 @@ class ConfirmationEmailException extends \Exception {}
  */
 class GeneralException extends \Exception {}
 
+/**
+ * @desc While category deletion if category contains products
+ * Class CategoryContainsProductsException
+ * @package App\Exceptions
+ */
+class CategoryContainsProductsException extends \Exception
+{
+	public function __construct( $message = "", $categoryName )
+	{
+		parent::__construct( $message, 0, NULL );
+		$this->categoryName = $categoryName;
+	}
 
+	public $categoryName = '';
+}
 
 
 

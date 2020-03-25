@@ -8,13 +8,17 @@ $(function() {
 document.addEventListener('DOMContentLoaded', naja.initialize.bind(naja));
 
 naja.registerExtension(LoaderExtension);
-naja.registerExtension(LoaderExtension2);
+//naja.registerExtension(LoaderExtension2);
 
 
 function LoaderExtension(naja)
 {
 	naja.addEventListener('init', function () {
 		this.loader = document.querySelector('#loader');
+	}.bind(this));
+
+	naja.addEventListener('complete', function (e) {
+		console.log('naja complete');
 	}.bind(this));
 
 	naja.addEventListener('start', showLoader.bind(this));
