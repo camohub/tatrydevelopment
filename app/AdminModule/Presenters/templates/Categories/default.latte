@@ -29,9 +29,9 @@
 									<div>
 										<div class="insert-zone"></div>
 										<div class="actions">
-											<a n:href="changeCategoryVisibility! $item->id" n:class="ignore, ajax, fa, fa-lg, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? fa-check-square : fa-minus-square, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? color-6 : color-7" title="Visible/Hidden"> </a>
-											<a n:href=":Admin:Categories:default $item->id" class="ignore ajax fa fa-lg fa-pen-square color-6" data-naja-history="off" title="Edit"> </a>
-											<a n:href="deleteCategory! $item->id" {if !$presenter->isAjax()}style="display:none"{/if} class="ignore fa-stack color-7 color-7 trash" title="Delete">
+											<a n:href="changeCategoryVisibility! $item->id" data-naja-history="off" n:class="ignore, ajax, fa, fa-lg, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? fa-check-square : fa-minus-square, $item->status == \App\Model\Orm\Category::STATUS_PUBLISHED ? color-6 : color-7" title="Visible/Hidden"> </a>
+											<a n:href=":Admin:Categories:default $item->id" data-naja-history="off" class="ignore ajax fa fa-lg fa-pen-square color-6" title="Edit"> </a>
+											<a n:href="deleteCategory! $item->id" data-naja-history="off" {if !$presenter->isAjax()}style="display:none"{/if} class="ignore fa-stack color-7 color-7 trash" title="Delete">
 												<i class="ignore fas fa-square fa-stack-2x"></i>
 												<i class="ignore fas fa-trash-alt fa-stack-1x color-1"></i>
 											</a>
@@ -50,7 +50,7 @@
 
 					{* Script is in snippet cause ajax renders new list without activ sortableLists *}
 					<script>
-						$( '.sortable-wrapper' ).sortableLists( {
+						var sortableLists = $( '.sortable-wrapper' ).sortableLists( {
 							placeholderClass: 'placeholder',
 							hintClass: 'hint',
 							ignoreClass: 'ignore',
@@ -68,7 +68,19 @@
 								}
 							}
 						} );
+						////////////////////////////////////////////////////////////////////////
+						////// SHOW SOME ITEMS ////////////////////////////////////////////////
+						//////////////////////////////////////////////////////////////////////
+						var showItems = {ifset $showItems}{(array)$showItems}{else}[]{/ifset}
+						showItems.forEach(function(id)
+						{
+							var li = $('#categoryItems_' + id);
 
+							li.parents('li').each(function(index)
+							{
+								$(this).find('div').first().children('.sortableListsOpener').trigger('mousedown');
+							});
+						});
 						///////////////////////////////////////////////////////////////////////
 						////// DELETE BTN HAS TO BE HERE IN SNIPPET //////////////////////////
 						/////////////////////////////////////////////////////////////////////

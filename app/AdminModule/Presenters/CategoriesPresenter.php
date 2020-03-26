@@ -87,30 +87,30 @@ class CategoriesPresenter extends BaseAdminPresenter
 	 */
 	public function handleChangeCategoryVisibility( $id )
 	{
-		$category = $this->categoryArticleRepository->find( $id );
+		$category = $this->orm->categories->getById($id);
+		$this->showModal = FALSE;
+		$this->template->showItems = [$id];
+		Debugger::barDump($this->template->showItems);
 
 		try
 		{
-			$this->categoriesArticlesService->switchVisibility( $category );
+			$this->categoriesService->switchVisibility( $category );
 			// Dynamic snippet redraw needs to set only one item to template.
-			$this->articlesCategories = $this->categoryArticleRepository->findBy( ['id' => $id] );
-			$this->flashMessage( 'Viditeľnosť položky bola upravená.', 'success' );
+			$this->flashSuccess( 'Viditeľnosť položky bola upravená.');
 		}
 		catch ( \Exception $e )
 		{
 			Debugger::log($e);
-			$this->flashMessage( 'Pri ukladaní údajov došlo k chybe.', 'error' );
+			$this->flashDanger('Pri ukladaní údajov došlo k chybe.');
 		}
 
 		if( $this->isAjax() )
 		{
 			$this->redrawControl( 'sortableList' );
-			$this->redrawControl( 'sortableListScript' );
-			$this->redrawControl( 'flash' );
 			return;
 		}
 
-		$this->redirect( ':Admin:Menu:default' );
+		$this->redirect( ':Admin:Categories:default' );
 
 	}
 

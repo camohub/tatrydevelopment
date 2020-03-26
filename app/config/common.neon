@@ -1,4 +1,6 @@
 parameters:
+	translator:
+		langs: [sk, cs, en]
 
 
 application:
@@ -15,7 +17,7 @@ translation:
 	debugger: true
 	default: sk
 	fallback: [sk_SK, sk]
-	whitelist: [sk, en, cs]
+	whitelist: %translator.langs%
 
 
 orm:
@@ -36,6 +38,7 @@ services:
 
 	#SERVICES
 	- App\Model\Services\CategoriesService
+	- App\Model\Services\LangsService(%translator.langs%)
 
 	#COMPONENTS
 	- App\Front\Components\IModalControlFactory

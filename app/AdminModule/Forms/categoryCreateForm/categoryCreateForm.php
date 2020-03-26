@@ -6,6 +6,7 @@ namespace App\Admin\Forms;
 use App\Exceptions\DuplicateEntryException;
 use App\Model\Orm\Orm;
 use App\Model\Services\CategoriesService;
+use App\Model\Services\LangsService;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
@@ -28,13 +29,17 @@ class CategoryCreateFormControl extends Control
 	/** @var  CategoriesService */
 	protected $categoriesService;
 
+	/** @var  LangsService */
+	protected $langsService;
 
-	public function __construct( $id, Orm $orm, CategoriesService $cS, Translator $t )
+
+	public function __construct( $id, Orm $orm, CategoriesService $cS, Translator $t, LangsService $lS )
 	{
 		$this->id = $id;
 		$this->orm = $orm;
 		$this->categoriesService = $cS;
 		$this->translator = $t;
+		$this->langsService = $lS;
 	}
 
 
@@ -53,7 +58,7 @@ class CategoryCreateFormControl extends Control
 
 		$form->addProtection( 'Vypršal čas vyhradený pre odoslanie formulára. Z dôvodu rizika útoku CSRF bola požiadavka na server zamietnutá.' );
 
-		$langs = $this->translator->getAvailableLocales();
+		$langs = $this->langsService->getLangs();
 
 		$form->addGroup();
 

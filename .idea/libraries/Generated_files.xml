@@ -3,10 +3,14 @@
     <properties>
       <sourceFilesUrls>
         <item url="file://$PROJECT_DIR$/www/assets/js/main.min.js" />
+        <item url="file://$PROJECT_DIR$/www/assets/js/jquery-ui-sortable.min.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
+      <root url="file://$PROJECT_DIR$/www/assets/js/jquery-ui-sortable.min.min.js" />
+      <root url="file://$PROJECT_DIR$/www/assets/js/jquery-ui-sortable.min.min.js" />
       <root url="file://$PROJECT_DIR$/www/assets/js/main.min.js" />
+      <root url="file://$PROJECT_DIR$/www/assets/js/jquery-ui-sortable.min.js" />
     </CLASSES>
     <SOURCES />
   </library>

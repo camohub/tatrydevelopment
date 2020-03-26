@@ -63,11 +63,11 @@ class CategoriesService
 	 * @param $category
 	 * @return mixed
 	 */
-	public function switchVisibility( $category )
+	public function switchVisibility( Category $category )
 	{
-		$status = $this->statusRepository->find( $category->getStatus()->getId() == Entity\Status::STATUS_PUBLISHED ? Entity\Status::STATUS_UNPUBLISHED : Entity\Status::STATUS_PUBLISHED );
-		$category->setStatus( $status );
-		$this->em->flush( $category );
+		$newStatus = $category->status == Category::STATUS_PUBLISHED ? Category::STATUS_UNPUBLISHED : Category::STATUS_PUBLISHED;
+		$category->status = $newStatus;
+		$this->orm->categories->persistAndFlush($category);
 
 		$this->cleanCache();
 
@@ -85,7 +85,7 @@ class CategoriesService
 	{
 		$ids[] = $category->getId();
 
-		if ( $children = $this->categoryArticleRepository->findBy( [ 'parent_id' => $category->getId() ] ) )
+		if ( $children = $this->orm->categories->findBy(['parent' => $category->getId()]))
 		{
 			foreach ( $children as $child )
 			{
@@ -104,12 +104,12 @@ class CategoriesService
 	 */
 	public function findCategoryArticles( $category )
 	{
-		if( is_numeric( $category ) ) $category = $this->categoryArticleRepository->find( $category );
+		if( is_numeric( $category ) ) $category = $this->orm->categories->find( $category );
 
 		$cat_ids = $this->findCategoryTreeIds( $category );
 
 		$criteria = [ 'categories.id' => $cat_ids ];
-		$articles = $this->categoryArticleRepository->createQueryBuilder()
+		$articles = $this->orm->categories->createQueryBuilder()
 			->select( 'a' )
 			->from( 'App\Model\Entity\Article', 'a' )
 			->whereCriteria( $criteria )
