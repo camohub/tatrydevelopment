@@ -7,6 +7,7 @@ use App\Exceptions\DuplicateEntryException;
 use App\Model\Orm\Category;
 use App\Model\Orm\Orm;
 use App\Model\Services\CategoriesService;
+use App\Model\Services\LangsService;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
@@ -29,13 +30,17 @@ class CategoryNameFormControl extends Control
 	/** @var  CategoriesService */
 	protected $categoriesService;
 
+	/** @var  LangsService */
+	protected $langsService;
 
-	public function __construct( $id, Orm $orm, CategoriesService $cS, Translator $t )
+
+	public function __construct( $id, Orm $orm, CategoriesService $cS, Translator $t, LangsService $lS )
 	{
 		$this->id = $id;
 		$this->orm = $orm;
 		$this->categoriesService = $cS;
 		$this->translator = $t;
+		$this->langsService = $lS;
 	}
 
 
@@ -58,13 +63,18 @@ class CategoryNameFormControl extends Control
 
 		/** @var Category $category */
 		$category = $this->orm->categories->getById( $this->id );
+		$langs = $this->langsService->getLangs();
+
+		foreach ( $langs as $lang )
+		{
+			$names->addText( $lang, $lang )
+				->setRequired( 'Názov je povinné pole.' )
+				->setAttribute( 'class', 'form-control' );
+		}
 
 		foreach ( $category->langs as $lang )
 		{
-			$names->addText( $lang->lang, $lang->lang )
-				->setRequired( 'Názov je povinné pole.' )
-				->setAttribute( 'class', 'form-control' )
-				->setDefaultValue( $lang->name );
+			$names[$lang->lang]->setDefaultValue( $lang->name );
 		}
 
 		$form->addHidden( 'id', $this->id );

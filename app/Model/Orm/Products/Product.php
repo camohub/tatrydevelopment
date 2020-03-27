@@ -13,10 +13,15 @@ use Tracy\Debugger;
 
 /**
  * @property int                                $id                {primary}
+ * @property Product|NULL                       $parent            {m:1 Product::$allProducts}
+ * @property OneHasMany|Product[]               $allProducts       {1:m Product::$parent, orderBy=[priority=ASC], cascade=[persist, remove]}
+ * @property OneHasMany|Product[]               $adminProducts     {virtual}
+ * @property OneHasMany|Product[]               $products          {virtual}
  * @property ProductLang[]                      $langs             {1:m ProductLang::$product}
  * @property float                              $price
  * @property-read string                        $name              {virtual}
  * @property int|NULL                           $stock             {default NULL}
+ * @property int                                $priority          {default 1}
  * @property DateTimeImmutable                  $created           {default now}
  * @property DateTimeImmutable                  $updated           {default now}
  * @property DateTimeImmutable                  $deleted           {default NULL}
@@ -25,6 +30,10 @@ use Tracy\Debugger;
  */
 class Product extends Entity
 {
+	const STATUS_UNPUBLISHED = 1;
+	const STATUS_PUBLISHED = 2;
+	const STATUS_DELETED = 3;
+
 
 	public function getterName()
 	{
@@ -32,5 +41,17 @@ class Product extends Entity
 		if( !$lang || !$lang->name ) $lang = $this->langs->get()->getBy(['lang' => 'sk']);
 
 		return $lang->name;
+	}
+
+
+	public function getterAdminProducts()
+	{
+		return $this->allProducts->get()->findBy(['status!=' => self::STATUS_DELETED]);
+	}
+
+
+	public function getterProducts()
+	{
+		return $this->allProducts->get()->findBy(['status' => self::STATUS_PUBLISHED]);
 	}
 }

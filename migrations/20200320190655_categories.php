@@ -16,7 +16,7 @@ class Categories extends AbstractMigration
 			CREATE TABLE `categories` (
 				 `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 				 `parent` int(10) UNSIGNED DEFAULT NULL,
-				 `priority` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
+				 `priority` int(10) UNSIGNED NOT NULL DEFAULT 1,
 				 `status` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
 				 PRIMARY KEY (`id`),
 				 KEY `categories_parent_k` (`parent`),

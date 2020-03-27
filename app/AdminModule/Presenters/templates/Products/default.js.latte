@@ -26,10 +26,18 @@ function LoaderMenuExtension(naja)
 {
 	naja.addEventListener('interaction', function(e)
 	{
-		this.element =e.detail.element;
+		this.element = e.detail.element;
 
-		if( this.element.classList.contains('stop-ajax') ) e.preventDefault();
-		if( this.element.id == 'categoryCreateFormSubmit' ) this.element.classList.add('stop-ajax');
+		if( this.element.hasClass('stop-ajax') ) e.preventDefault();
+		e.preventDefault();
+		if( this.element.id == 'categoryCreateFormSubmit' ) this.element.addClass('stop-ajax');
+	});
+
+	naja.addEventListener('before', function(e)
+	{
+		if( this.element.hasClass('stop-ajax') ) e.preventDefault();
+		e.preventDefault();
+		if( this.element.id == 'categoryCreateFormSubmit' ) this.element.addClass('stop-ajax');
 	});
 
 	function error(e)

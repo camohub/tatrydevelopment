@@ -43,13 +43,14 @@ services:
 	#COMPONENTS
 	- App\Front\Components\IModalControlFactory
 	- App\Front\Components\ITestControlFactory
-	- App\Admin\Components\IAdminEshopMenuControlFactory
 
 	#FORMS
 	- App\Front\Components\ISignInFormControlFactory
 	- App\Admin\Forms\ICategoryNameFormControlFactory
 	- App\Admin\Forms\ICategoryCreateFormControlFactory
 
-	#DATAGRIDS
+	#DATAGRIDS FRONT
 	- App\Front\Components\IDatagridTestControlFactory
 	- App\Front\Components\IDatagridUsersControlFactory
+	#DATAGRIDS ADMIN
+	- App\Admin\Components\IDatagridProductsControlFactory

@@ -31,6 +31,7 @@ class AuthorizatorFactory
 		$permission->addResource('administration');
 		$permission->addResource('user');
 		$permission->addResource('category');
+		$permission->addResource('product');
 		$permission->addResource('image');
 
 		/* registered oprávnenia */

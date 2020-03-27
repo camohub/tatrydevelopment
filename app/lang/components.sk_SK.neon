@@ -19,4 +19,16 @@ datagridUsers:
 	confirmDelete: Naozaj chcete zmazať záznam %s?
 	deleteSuccess: Položka bola zmazaná
 
-eshopMenu:
+datagridProducts:
+	id: ID
+	name: Názov
+	created: Vytvorený
+	active: Aktívny
+	inactive: Neaktívny
+	activeAll: všetky
+	active1: aktívny
+	active0: neaktívny
+	delete: Zmazať
+	confirmDelete: Naozaj chcete zmazať produkt %s?
+	deleteSuccess: Položka bola zmazaná
+

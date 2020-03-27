@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Front\Components;
+namespace App\Admin\Components;
 
 
 use App\Model\Orm\Orm;
@@ -13,7 +13,7 @@ use Ublaboo\DataGrid\Column\Action\Confirmation\StringConfirmation;
 use Ublaboo\DataGrid\DataGrid;
 
 
-class DatagridUsersControl extends Control
+class DatagridProductsControl extends Control
 {
 
 	public $id;
@@ -33,26 +33,23 @@ class DatagridUsersControl extends Control
 
 	public function render()
 	{
-		$this->template->setFile(__DIR__ . '/datagridUsers.latte');
+		$this->template->setFile(__DIR__ . '/datagridProducts.latte');
 		$this->template->render();
 	}
 
 
 	public function createComponentGrid( string $name ): DataGrid
 	{
-		$cDomain = 'components.datagridUsers';
+		$cDomain = 'components.datagridProducts';
 		$grid = new DataGrid($this, 'grid');
 		$grid->setTranslator($this->translator);
-		$grid->setDataSource($this->orm->users->findAll());
+		$grid->setDataSource($this->orm->products->findAdminProducts());
 		$grid->setDefaultPerPage(20);
-		$grid::$iconPrefix = 'glyphicon glyphicon-';
+		$grid::$iconPrefix = 'fa fa-';
 
 		$this->setId($grid, $cDomain);
 		$this->setName($grid, $cDomain);
-		$this->setEmail($grid, $cDomain);
-		$this->setRoles($grid, $cDomain);
-		//$this->setActive($grid, $cDomain);
-		$this->setActive2($grid, $cDomain);
+		$this->setActive($grid, $cDomain);
 		$this->setCreated($grid, $cDomain);
 		$this->setActionDelete($grid, $cDomain);
 		$this->setSum($grid, $cDomain);
@@ -91,51 +88,9 @@ class DatagridUsersControl extends Control
 	}
 
 
-	protected function setRoles(DataGrid $grid, $cDomain)
+	protected function setActive(DataGrid $grid, $cDomain)
 	{
-		$grid->addColumnText('roles', "$cDomain.roles")
-			->setTemplateEscaping(FALSE)
-			->setRenderer(function ($item) {
-				$rNames = [];
-				foreach ($item->roles as $r) $rNames[] = $r->name;
-				return join(', ', $rNames);
-			})
-			->setFilterText('roles')
-			->setCondition(function ($collection, $value) {
-				/** @var DbalCollection $collection */
-				$collection->getQueryBuilder()
-					->innerJoin('users', 'users_x_roles' , 'uxr', 'users.id = uxr.user_id')
-					->innerJoin('uxr', 'roles' , 'roles', 'uxr.role_id = roles.id')
-					->andWhere('roles.name LIKE %s', "%$value%");
-			});
-	}
-
-
-	/*protected function setActive(DataGrid $grid, $cDomain)
-	{
-		$grid->addColumnText('active', "$cDomain.active")
-			->setTemplateEscaping(FALSE)
-			->setRenderer(function ($item) use ($cDomain) {
-				$class = $item->active ? 'text-success' : 'text-danger';
-				$text = $this->translator->translate($cDomain . '.active' . (int)$item->active);
-				return '<span class="' . $class . '">' . $text . '</span>';
-			})
-			->setSortable()
-			->setFilterSelect([
-				2 => $this->translator->translate("$cDomain.activeAll"),
-				0 => $this->translator->translate("$cDomain.active0"),
-				1 => $this->translator->translate("$cDomain.active1")
-			], 'active')
-			->setCondition(function ($collection, $value) {
-				// TODO: filter throws an error
-				if( (int)$value != 2 ) $collection->getQueryBuilder()->andWhere('active = %i', (int)$value);
-			});
-	}*/
-
-
-	protected function setActive2(DataGrid $grid, $cDomain)
-	{
-		$grid->addColumnStatus('active2', "$cDomain.active", 'active')
+		$grid->addColumnStatus('active', "$cDomain.active", 'active')
 			->addOption(true, "$cDomain.active")
 			->setClass('btn-success')
 			->endOption()
@@ -157,9 +112,9 @@ class DatagridUsersControl extends Control
 
 	public function activeChange($id, $newValue)
 	{
-		$user = $this->orm->users->getById($id);
-		$user->active = (bool)$newValue;
-		$this->orm->users->persistAndFlush($user);
+		$product = $this->orm->products->getById($id);
+		$product->active = (bool)$newValue;
+		$this->orm->products->persistAndFlush($product);
 
 		if ($this->getPresenter()->isAjax()) {
 			$this['grid']->redrawItem($id);
@@ -188,7 +143,7 @@ class DatagridUsersControl extends Control
 
 	protected function setActionDelete(DataGrid $grid, $cDomain)
 	{
-		$grid->addAction('deleteUser!', "$cDomain.delete")
+		$grid->addAction('deleteProduct!', "$cDomain.delete")
 			->setIcon('trash')
 			->setConfirmation(
 				new StringConfirmation("$cDomain.confirmDelete", 'name') // Second parameter is optional
@@ -196,17 +151,17 @@ class DatagridUsersControl extends Control
 	}
 
 
-	public function handleDeleteUser($id)
+	public function handleDeleteProduct($id)
 	{
 		$presenter = $this->getPresenter();
 
-		if( $user = $this->orm->users->getById($id) )
+		if( $product = $this->orm->products->getById($id) )
 		{
-			$user->deleted = 'now';
-			$this->orm->users->persistAndFlush($user);
+			$product->deleted = 'now';
+			$this->orm->products->persistAndFlush($product);
 		}
 
-		$presenter->flashSuccess('//components.usersDatagrid.deleteSuccess');
+		$presenter->flashSuccess('//components.productsDatagrid.deleteSuccess');
 
 		if ($presenter->isAjax())
 		{
@@ -219,7 +174,7 @@ class DatagridUsersControl extends Control
 	}
 }
 
-interface IDatagridUsersControlFactory
+interface IDatagridProductsControlFactory
 {
-	public function create($id = NULL): DatagridUsersControl;
+	public function create($id = NULL): DatagridProductsControl;
 }

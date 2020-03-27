@@ -13,4 +13,10 @@ class ProductsRepository extends Repository
 	{
 		return [Product::class];
 	}
+
+
+	public function findAdminProducts()
+	{
+		return $this->findBy(['parent' => NULL])->orderBy(['priority' => 'ASC']);
+	}
 }

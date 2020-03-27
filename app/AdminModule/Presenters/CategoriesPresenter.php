@@ -5,26 +5,23 @@ namespace App\AdminModule\Presenters;
 
 
 use App;
-use App\Admin\Components\IAdminEshopMenuControlFactory;
-use App\AdminModule\Forms\CategoriesEditFormFactory;
-use App\AdminModule\Forms\CategoryFormFactory;
+use App\Admin\Forms\ICategoryCreateFormControlFactory;
+use App\Admin\Forms\ICategoryNameFormControlFactory;
+use App\Model\Services\CategoriesService;
 use Tracy\Debugger;
 
 
 class CategoriesPresenter extends BaseAdminPresenter
 {
 
-	/** @var  App\Model\Services\CategoriesService @inject */
+	/** @var  CategoriesService @inject */
 	public $categoriesService;
 
-	/** @var  App\Admin\Forms\ICategoryNameFormControlFactory @inject */
+	/** @var  ICategoryNameFormControlFactory @inject */
 	public $categoryNameFormFactory;
 
-	/** @var  App\Admin\Forms\ICategoryCreateFormControlFactory @inject */
+	/** @var  ICategoryCreateFormControlFactory @inject */
 	public $categoryCreateFormFactory;
-
-	/** @var  IAdminEshopMenuControlFactory @inject */
-	public $adminEshopCategoriesFactory;
 
 	public $id = NULL;
 
@@ -90,7 +87,6 @@ class CategoriesPresenter extends BaseAdminPresenter
 		$category = $this->orm->categories->getById($id);
 		$this->showModal = FALSE;
 		$this->template->showItems = [$id];
-		Debugger::barDump($this->template->showItems);
 
 		try
 		{
@@ -153,13 +149,9 @@ class CategoriesPresenter extends BaseAdminPresenter
 	}
 
 
+/////////////////////////////////////////////////////////////////////////////////////////
 ////// Controls ////////////////////////////////////////////////////////////////////////
-
-	public function createComponentAdminEshopCategories()
-	{
-		return $this->adminEshopCategoriesFactory->create();
-	}
-
+///////////////////////////////////////////////////////////////////////////////////////
 
 	public function createComponentEditCategoryNameForm()
 	{

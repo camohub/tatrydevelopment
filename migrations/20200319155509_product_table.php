@@ -19,13 +19,21 @@ class ProductTable extends AbstractMigration
 		$this->query('
 			CREATE TABLE IF NOT EXISTS `products` (
 				`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+				`parent` int(10) UNSIGNED DEFAULT NULL,
 				`price` decimal(10,2) UNSIGNED NOT NULL,
 				`stock` mediumint(9) DEFAULT NULL,
+				`priority` INT UNSIGNED NOT NULL DEFAULT \'1\'
 				`created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				`updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				`deleted` datetime NULL DEFAULT NULL,
-				PRIMARY KEY (`id`)
+				`deleted` datetime DEFAULT NULL,
+				PRIMARY KEY (`id`),
+				KEY `products_parent_k` (`parent`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_slovak_ci;
+		');
+
+		$this->query('
+			ALTER TABLE `products` ADD CONSTRAINT `products_parent_fk` FOREIGN KEY (`parent`) 
+				REFERENCES `products` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 		');
 
 		$this->query('

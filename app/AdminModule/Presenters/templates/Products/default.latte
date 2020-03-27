@@ -1,0 +1,22 @@
+
+{block content}
+
+{block otherScripts}
+	<script src="{$basePath}/assets/node_modules/jquery-sortable-lists/jquery-sortable-lists.min.js"></script>
+	{*<script src="{$basePath}/assets/node_modules/jquery-sortable-lists/jquery-sortable-lists.js"></script>*}
+{/block}
+
+{include 'default.js.latte'}
+
+<div class="row disp-none" id="article-category-form">
+	<div class="col-xs-12">
+		<a n:href=":Admin:Categories:default createForm => true" data-naja-history="off" class="ajax btn btn-primary">Vytvoriť produkt</a>
+	</div>
+</div>
+
+<div class="row">
+	<h3 class="col-xs-12 col-md-10 col-lg-6">Editovať produkty</h3>
+</div>
+
+{control productsDatagrid}
+
