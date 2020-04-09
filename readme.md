@@ -1,7 +1,7 @@
 TRANSLATOR
 --------------------------------------
 - config
-- Router - pri zmene upraviť všetky routy
+- Router - pri zmene upraviť všetky routy ktoré obsahujú locale
 - BasePresenter
 
 ORM
@@ -38,4 +38,9 @@ MODAL COMPONENT
 		
 AJAX
 ---------------------------------------
+- Flash messages a Modal sa automaticky invalidujú v BasePresenter::beforeRender
+		nieje treba vôbec volať `$this['modal']->redrawControl()`
 - data-naja-history => "off" - zabráni ukladaniu adries do historie - form button
+- data-naja-append - pridáva ajaxový obsah k predošlému
+- data-naja-preppend - pridáva ajaxový obsah pred predošlý
+- redirect po uložení formulára sa robí cez `$presenter->payload->forceRedirect = TRUE`

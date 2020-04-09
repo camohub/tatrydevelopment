@@ -31,4 +31,5 @@ datagridProducts:
 	delete: Zmazať
 	confirmDelete: Naozaj chcete zmazať produkt %s?
 	deleteSuccess: Položka bola zmazaná
+	edit: Editovať
 

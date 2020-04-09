@@ -5,18 +5,21 @@ namespace App\Admin\Forms;
 
 use App\Exceptions\DuplicateEntryException;
 use App\Model\Orm\Orm;
+use App\Model\Orm\Parameter;
 use App\Model\Services\CategoriesService;
 use App\Model\Services\LangsService;
+use App\Model\Services\ParametersService;
+use App\Model\Services\ProductsService;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
 use Tracy\Debugger;
 
 
-class CategoryCreateFormControl extends Control
+class ParameterCreateFormControl extends Control
 {
 
-	public $modalTitle = 'Vytvoriť kategóriu';
+	public $modalTitle = 'Vytvoriť parameter produktu';
 
 	public $id;
 
@@ -26,27 +29,25 @@ class CategoryCreateFormControl extends Control
 	/** @var  Orm */
 	protected $orm;
 
-	/** @var  CategoriesService */
-	protected $categoriesService;
+	/** @var  ParametersService */
+	protected $parametersService;
 
 	/** @var  LangsService */
 	protected $langsService;
 
 
-	public function __construct( $id, Orm $orm, CategoriesService $cS, Translator $t, LangsService $lS )
+	public function __construct( $id, Orm $orm, ParametersService $pS, LangsService $lS )
 	{
 		$this->id = $id;
 		$this->orm = $orm;
-		$this->categoriesService = $cS;
-		$this->translator = $t;
+		$this->parametersService = $pS;
 		$this->langsService = $lS;
 	}
 
 
 	public function render()
 	{
-		$this->getPresenter()->setReferer(self::class);
-		$this->template->setFile( __DIR__ . '/categoryCreateForm.latte' );
+		$this->template->setFile( __DIR__ . '/parameterCreateForm.latte' );
 		$this->template->render();
 	}
 
@@ -60,24 +61,22 @@ class CategoryCreateFormControl extends Control
 
 		$langs = $this->langsService->getLangs();
 
-		$form->addGroup();
-
-		$names = $form->addContainer( 'names', 'Názov kategórie' );
+		$names = $form->addContainer('names', 'Názov parametra');
 		foreach ( $langs as $lang )
 		{
-			$lang = strtolower(explode('_', $lang)[0]);
-
 			$names->addText( $lang, 'Názov ' . $lang )
 				->setRequired( 'Názov je povinné pole pre každý jazyk.' )
 				->setAttribute( 'class', 'form-control' );
 		}
 
-		$form->addSelect( 'parent', 'Vyberte pozíciu', $this->categoriesService->categoriesToSelect() )
+		$form->addSelect('type', 'Typ hodnoty', [Parameter::TYPE_STRING => 'Text', Parameter::TYPE_BOOLEAN => 'Ano/Nie'])
 			->setPrompt('')
-			->setAttribute( 'class', 'form-control' );
+			->setRequired('Vyberte prosím typ hodnoty.');
 
-		$form->addSubmit( 'sbmt', 'Uložiť' )
-			->setAttribute( 'class', 'btn btn-primary btn-sm' );
+
+
+		$form->addSubmit('sbmt', 'Uložiť')
+			->setHtmlAttribute('class', 'btn btn-primary btn-sm');
 
 		$form->onSuccess[] = [$this, 'formSucceeded'];
 
@@ -92,12 +91,12 @@ class CategoryCreateFormControl extends Control
 
 		try
 		{
-			$this->categoriesService->createCategory( $values );
+			$this->parametersService->createParameter( (array)$values );
 		}
-		catch ( DuplicateEntryException $e )
+		catch ( \Nextras\Dbal\UniqueConstraintViolationException $e )
 		{
 			// TODO: Bolo by lepsie zobrazit presne v ktorom jazyku je chyba tj. vyhladat cez query ci v db taky nazov je.
-			$form->addError('Kategória s vybraným názvom už existuje. Názov musí byť unikátny.');
+			$form->addError('Parameter s vybraným názvom už existuje. Názov musí byť unikátny.');
 			return $form;
 		}
 		catch ( \Exception $e )
@@ -107,21 +106,20 @@ class CategoryCreateFormControl extends Control
 			return $form;
 		}
 
-		$presenter->flashMessage('Kategória bola vytvorená.', 'success');
+		$presenter->flashMessage('Parameter bol vytvorený.', 'success');
 
 		if( $presenter->isAjax() )
 		{
 			$presenter->showModal = FALSE;
-			$presenter->redrawControl('sortableList');
 			return;
 		}
 
-		$presenter->redirect(':Admin:Categories:default');
+		$presenter->redirect(':Admin:Products:default');
 	}
 
 }
 
-interface ICategoryCreateFormControlFactory
+interface IParameterCreateFormControlFactory
 {
-	public function create($id = NULL): CategoryCreateFormControl;
+	public function create($id = NULL): ParameterCreateFormControl;
 }

@@ -179,16 +179,23 @@ body {
 #left-menu ul li span:hover {
   background-color: #555;
   color: #fff;
+  text-decoration: none;
 }
 #content {
   width: 100%;
-  padding-left: 20%;
+  padding-left: 23%;
   min-height: 100%;
 }
 #content h1#main {
   height: 80px;
   line-height: 80px;
   font-size: 50px;
+}
+label {
+  font-size: 14px;
+}
+input[type="checkbox"] {
+  margin-right: 5px;
 }
 #footer {
   position: absolute;
@@ -207,11 +214,6 @@ body {
 .fa-stack i {
   vertical-align: middle;
 }
-a.btn {
-  color: #fff;
-}
-a.btn:visited,
-a.btn:active,
-a.btn:hover {
-  color: #fff;
+hr.text-danger {
+  border-top-color: #a94442;
 }

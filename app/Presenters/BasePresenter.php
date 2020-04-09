@@ -121,7 +121,21 @@ class BasePresenter extends Nette\Application\UI\Presenter
 			{
 				if ( $key == self::FLASH_KEY ) continue;
 
-				$url .= !$qs ? '&' . $key . '=' . $val : '?' . $key . '=' . $val;
+				if( is_array($val) )
+				{
+					foreach ($val as $item)
+					{
+						$qs .= !$qs
+							? '&' . $key . '[]=' . $item
+							: '?' . $key . '[]=' . $item;
+					}
+				}
+				else
+				{
+					$qs .= !$qs
+						? '&' . $key . '=' . $val
+						: '?' . $key . '=' . $val;
+				}
 			}
 		}
 

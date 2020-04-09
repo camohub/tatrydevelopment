@@ -1,0 +1,61 @@
+<script>
+
+function categoriesInit()
+{
+	///////////////////////////////////////////////////////////////////////
+	////// SAVE BTN SORTABLE LIST SERIALIZATION //////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	$('.save-categories').mousedown( function()
+	{
+		var serialized = $( 'ul.sortable-wrapper' ).sortableListsToString();
+		var href = $( this ).attr( 'href' );
+
+		serialized = serialized.replace( /no-parent/g, '0' );
+		href = href.replace( /&categoryItems[^&]+/g, '' );  // If original url contains categoryItems these have to be removed.
+
+		$( this ).attr( 'href', href + '&' + serialized );  // Not need to solve ? cause links to handle methods always have do= param
+	});
+}
+
+window.addEventListener ? window.addEventListener( 'load', categoriesInit ) : window.attachEvent( 'onload', categoriesInit );
+
+/////////////////////////////////////////////////////////////////////
+///// NAJA AJAX EXTENSIONS /////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+function LoaderMenuExtension(naja)
+{
+	naja.addEventListener('interaction', function(e)
+	{
+		this.element = e.detail.element;
+
+		if( this.element.hasClass('stop-ajax') ) e.preventDefault();
+		e.preventDefault();
+		if( this.element.id == 'categoryCreateFormSubmit' ) this.element.addClass('stop-ajax');
+	});
+
+	naja.addEventListener('before', function(e)
+	{
+		if( this.element.hasClass('stop-ajax') ) e.preventDefault();
+		e.preventDefault();
+		if( this.element.id == 'categoryCreateFormSubmit' ) this.element.addClass('stop-ajax');
+	});
+
+	function error(e)
+	{
+		$( '#snippet--flash' ).html(
+			'<div class="alert alert-dismissible fade in alert-danger">' +
+			'<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+			'<span aria-hidden="true">×</span></button>Pri spracovaní požiadavky došlo k  chybe.' +
+			'</div>'
+		);
+	}
+
+	return this;
+}
+
+
+naja.registerExtension(LoaderMenuExtension);
+// END OF NAJA AJAX EXTENSIONS ///////////////////////////////////////////////
+
+
+</script>

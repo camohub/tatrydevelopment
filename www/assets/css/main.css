@@ -38,16 +38,10 @@ h1.brand {
   font-size: 125px;
   font-weight: bolder;
 }
-.init-color {
-  color: #0f1225 !important;
-}
-.init-color #mainMenu a,
-.init-color #mainMenu span.anchor {
-  color: #0f1225 !important;
-}
-span.anchor,
-a,
-a:visited {
+#mainMenu span.anchor,
+#mainMenu a,
+#mainMenu a:visited {
+  display: block;
   color: #948aad;
   text-decoration: none;
   transition-property: color;
@@ -55,22 +49,24 @@ a:visited {
   transition-timing-function: ease;
   cursor: pointer;
 }
-span.anchor:hover,
-a:hover,
-a:visited:hover,
-span.anchor:active,
-a:active,
-a:visited:active,
-span.anchor:focus,
-a:focus,
-a:visited:focus {
+#mainMenu span.anchor:hover,
+#mainMenu a:hover,
+#mainMenu a:visited:hover,
+#mainMenu span.anchor:active,
+#mainMenu a:active,
+#mainMenu a:visited:active,
+#mainMenu span.anchor:focus,
+#mainMenu a:focus,
+#mainMenu a:visited:focus {
   color: #514b63;
   text-decoration: none;
 }
-#mainMenu span.anchor,
-#mainMenu a,
-#mainMenu a:visited {
-  display: block;
+.init-color {
+  color: #0f1225 !important;
+}
+.init-color #mainMenu a,
+.init-color #mainMenu span.anchor {
+  color: #0f1225 !important;
 }
 small {
   font-size: 0.5em;
@@ -151,8 +147,9 @@ small {
 }
 .datagrid {
   font-size: 18px;
-  font-family: Verdana;
+  font-family: Helvetica, Verdana;
   color: #444;
+  padding: 0;
 }
 .mar-1 {
   margin-top: 7px;

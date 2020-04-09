@@ -44,6 +44,25 @@ h1 {
 	}
 }
 
+#mainMenu {
+	span.anchor,
+	a,
+	a:visited {
+		display: block;
+		color: #948aad;
+		text-decoration: none;
+		transition-property: color;
+		transition-duration: 1s;
+		transition-timing-function: ease;
+		cursor: pointer;
+
+		&:hover, &:active, &:focus {
+			color: #514b63;
+			text-decoration: none;
+		}
+	}
+}
+
 .init-color {
 	color: #0f1225 !important;
 
@@ -52,30 +71,6 @@ h1 {
 		span.anchor {
 			color: #0f1225 !important;
 		}
-	}
-}
-
-span.anchor,
-a,
-a:visited {
-	color: #948aad;
-	text-decoration: none;
-	transition-property: color;
-	transition-duration: 1s;
-	transition-timing-function: ease;
-	cursor: pointer;
-
-	&:hover, &:active, &:focus {
-		color: #514b63;
-		text-decoration: none;
-	}
-}
-
-#mainMenu {
-	span.anchor,
-	a,
-	a:visited {
-		display: block;
 	}
 }
 
@@ -168,14 +163,8 @@ small {
 	padding: 6px 20px;
 }
 
-.datagrid {
-	font-size: 18px;
-	font-family: Verdana;
-	color: #444;
-}
 
 
 
-
-
+@import "datagrid.less";
 @import "margins-paddings.less";

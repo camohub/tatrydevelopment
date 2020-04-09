@@ -52,6 +52,7 @@ body {
 			&:hover {
 				background-color: #555;
 				color: #fff;
+				text-decoration: none;
 			}
 		}
 	}
@@ -59,7 +60,7 @@ body {
 
 #content {
 	width: 100%;
-	padding-left: 20%;
+	padding-left: 23%;
 	min-height: 100%;
 
 	h1#main {
@@ -67,6 +68,14 @@ body {
 		line-height: 80px;
 		font-size: 50px;
 	}
+}
+
+label {
+	font-size: 14px;
+}
+
+input[type="checkbox"] {
+	margin-right: 5px;
 }
 
 #footer {
@@ -89,10 +98,6 @@ body {
 	}
 }
 
-a.btn {
-	color: @color-1;
-
-	&:visited, &:active, &:hover {
-		color: @color-1;
-	}
+hr.text-danger {
+	border-top-color: #a94442;
 }

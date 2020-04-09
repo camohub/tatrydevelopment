@@ -37,8 +37,10 @@ services:
 	authorizator: @authorizatorFactory::create
 
 	#SERVICES
-	- App\Model\Services\CategoriesService
 	- App\Model\Services\LangsService(%translator.langs%)
+	- App\Model\Services\CategoriesService
+	- App\Model\Services\ProductsService
+	- App\Model\Services\ParametersService
 
 	#COMPONENTS
 	- App\Front\Components\IModalControlFactory
@@ -48,6 +50,8 @@ services:
 	- App\Front\Components\ISignInFormControlFactory
 	- App\Admin\Forms\ICategoryNameFormControlFactory
 	- App\Admin\Forms\ICategoryCreateFormControlFactory
+	- App\Admin\Forms\IProductCreateFormControlFactory
+	- App\Admin\Forms\IParameterCreateFormControlFactory
 
 	#DATAGRIDS FRONT
 	- App\Front\Components\IDatagridTestControlFactory

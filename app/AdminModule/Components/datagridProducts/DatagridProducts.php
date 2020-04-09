@@ -3,6 +3,7 @@
 namespace App\Admin\Components;
 
 
+use App\Admin\Forms\ProductCreateFormControl;
 use App\Model\Orm\Orm;
 use App\Presenters\BasePresenter;
 use Kdyby\Translation\Translator;
@@ -51,8 +52,8 @@ class DatagridProductsControl extends Control
 		$this->setName($grid, $cDomain);
 		$this->setActive($grid, $cDomain);
 		$this->setCreated($grid, $cDomain);
+		$this->setActionEdit($grid, $cDomain);
 		$this->setActionDelete($grid, $cDomain);
-		$this->setSum($grid, $cDomain);
 
 		return $grid;
 	}
@@ -135,19 +136,22 @@ class DatagridProductsControl extends Control
 	}
 
 
-	protected function setSum(DataGrid $grid, $cDomain)
-	{
-		$grid->setColumnsSummary(['id']);
-	}
-
-
 	protected function setActionDelete(DataGrid $grid, $cDomain)
 	{
-		$grid->addAction('deleteProduct!', "$cDomain.delete")
+		$grid->addAction('deleteProduct!', "")
+			->setTitle("$cDomain.delete")
 			->setIcon('trash')
 			->setConfirmation(
 				new StringConfirmation("$cDomain.confirmDelete", 'name') // Second parameter is optional
 			);
+	}
+
+
+	protected function setActionEdit(DataGrid $grid, $cDomain)
+	{
+		$grid->addAction(':Admin:Products:create', "$cDomain.edit")
+			->setTitle("$cDomain.edit")
+			->setIcon('edit');
 	}
 
 

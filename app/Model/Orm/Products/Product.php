@@ -12,21 +12,23 @@ use Tracy\Debugger;
 
 
 /**
- * @property int                                $id                {primary}
- * @property Product|NULL                       $parent            {m:1 Product::$allProducts}
- * @property OneHasMany|Product[]               $allProducts       {1:m Product::$parent, orderBy=[priority=ASC], cascade=[persist, remove]}
- * @property OneHasMany|Product[]               $adminProducts     {virtual}
- * @property OneHasMany|Product[]               $products          {virtual}
- * @property ProductLang[]                      $langs             {1:m ProductLang::$product}
- * @property float                              $price
- * @property-read string                        $name              {virtual}
- * @property int|NULL                           $stock             {default NULL}
- * @property int                                $priority          {default 1}
- * @property DateTimeImmutable                  $created           {default now}
- * @property DateTimeImmutable                  $updated           {default now}
- * @property DateTimeImmutable                  $deleted           {default NULL}
+ * @property int                                   $id                {primary}
+ * @property Product|NULL                          $parent            {m:1 Product::$allProducts}
+ * @property ProductLang[]                         $langs             {1:m ProductLang::$product}
+ * @property-read string                           $name              {virtual}
+ * @property float                                 $price
+ * @property int|NULL                              $stock             {default NULL}
+ * @property int                                   $priority          {default 1}
+ * @property DateTimeImmutable                     $created           {default now}
+ * @property DateTimeImmutable                     $updated           {default now}
+ * @property DateTimeImmutable|NULL                $deleted           {default NULL}
  *
- * @property ManyHasMany|Category[]|NULL        $category          {m:m Category::$products}
+ * @property OneHasMany|Product[]                  $allProducts       {1:m Product::$parent, orderBy=[priority=ASC], cascade=[persist, remove]}
+ * @property OneHasMany|Product[]                  $adminProducts     {virtual}
+ * @property OneHasMany|Product[]                  $products          {virtual}
+ *
+ * @property OneHasMany|ProductParameter[]|NULL    $parameters        {1:m ProductParameter::$product}
+ * @property ManyHasMany|Category[]|NULL           $categories        {m:m Category::$products}
  */
 class Product extends Entity
 {
@@ -53,5 +55,21 @@ class Product extends Entity
 	public function getterProducts()
 	{
 		return $this->allProducts->get()->findBy(['status' => self::STATUS_PUBLISHED]);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////// METHODS WITH PARAMS ////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	public function getName($lang)
+	{
+		$lang = $this->langs->get()->getBy(['lang' => $lang]);
+		return $lang ? $lang->name : NULL;
+	}
+
+
+	public function getDesc($lang)
+	{
+		$lang = $this->langs->get()->getBy(['lang' => $lang]);
+		return $lang ? $lang->desc : NULL;
 	}
 }

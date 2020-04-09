@@ -1,0 +1,20 @@
+
+{form form, class => 'ajax', data-naja-history => "off", id => 'createParameterForm'}
+	<div n:if="$form->hasErrors()" class="alert alert-danger">
+		{foreach $form->getErrors() as $e}{$e}<br>{/foreach}
+	</div>
+
+	{formContainer names}
+		<div n:foreach="$formContainer->getComponents() as $n" class="form-group">
+			{label $n /}&nbsp;{input $n, class => 'form-control'}
+		</div>
+	{/formContainer}
+
+	<div class="form-group">
+		{label type} {input type, class=>'form-control selectpicker'}
+	</div>
+
+	<div class="form-group">
+		{input sbmt, id => 'parameterCreateFormSubmit', data-naja-history => "off", class => 'btn btn-primary btn-sm ignore'}
+	</div>
+{/form}

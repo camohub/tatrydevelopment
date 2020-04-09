@@ -98,7 +98,7 @@ class CategoryNameFormControl extends Control
 		}
 		catch ( DuplicateEntryException $e )
 		{
-			$form->addError( 'Kategória s vybraným názvom už existuje. Názov musí byť unikátny pre každý jazyk.', 'error' );
+			$form->addError( 'Kategória s vybraným názvom už existuje. Názov musí byť unikátny.', 'error' );
 			return $form;
 		}
 		catch ( \Exception $e )

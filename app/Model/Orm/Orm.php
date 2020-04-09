@@ -20,6 +20,9 @@ use App\Model\Orm\ProductsRepository;
  * @property CategoriesLangsRepository $categoriesLangs
  * @property ProductsRepository $products
  * @property ProductsLangsRepository $productsLangs
+ * @property ParametersRepository $parameters
+ * @property ParametersLangsRepository $parametersLangs
+ * @property ProductsParametersRepository $productsParameters
  */
 class Orm extends Model
 {

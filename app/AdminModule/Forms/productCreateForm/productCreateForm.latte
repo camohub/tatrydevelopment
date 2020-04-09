@@ -1,0 +1,128 @@
+{snippet createProductForm}
+
+{form form, class => 'ajax', data-naja-history => "off", id => 'createCategoryForm'}
+	<div n:if="$form->hasErrors()" class="alert alert-danger">
+		{foreach $form->getErrors() as $e}{$e}<br>{/foreach}
+	</div>
+
+	{formContainer names}
+		<div n:foreach="$formContainer->getComponents() as $n" class="form-group">
+			{label $n /}&nbsp;{input $n, class => 'form-control'}
+		</div>
+	{/formContainer}
+
+	{formContainer desc}
+		<div n:foreach="$formContainer->getComponents() as $d" class="form-group">
+			{label $d /}&nbsp;{input $d, class => 'form-control'}
+		</div>
+	{/formContainer}
+
+	<div class="form-group">
+		{label categories /}
+
+		{* This circus is because of selectpicker title attribute *}
+		<select name="categories[]" multiple class="bs-multi-select form-control">
+			{foreach $_form['categories']->getItems() as $k => $v}
+				<option value="{$k}" title="{$v|trim:'-'}" {if array_key_exists($k, $_form['categories']->getSelectedItems())}selected{/if}>{$v}</option>
+			{/foreach}
+		</select>
+	</div>
+
+	<div class="form-group">
+		{label parent /} {input parent, class=>'selectpicker form-control'}
+	</div>
+
+	<div class="form-group">
+		{label price/} {input price, class=>'form-control'}
+	</div>
+
+	<div class="form-group">
+		{label stock/} {input stock, class=>'form-control'}
+	</div>
+
+
+	{*****************************************************************************************************************}
+	{********* PARAMS ************************************************************************************************}
+	{*****************************************************************************************************************}
+	<div class="form-group">
+		{label params /}
+		{input params, class=>'bs-multi-select form-control'}
+	</div>
+
+	<div class="form-group">
+		{input refresh}
+		<a href="{plink :Admin:Products:create createParameter => true}" class="ajax btn btn-sm btn-success" data-naja-history="off">Pridať nový parameter</a>
+	</div>
+
+	<div id="parameters-container">
+		{var $paramsContainer = $_form->getComponent('parameters')}
+		{foreach $parametersToSelect as $k => $v}
+			{var $hidden = !array_key_exists($k, $_form['params']->getSelectedItems()) ? 'hidden' : ''}
+			<div id="param-{$k}" class="{$hidden} parameter-container">
+				{if $parameters[$k]->type == \App\Model\ORM\Parameter::TYPE_STRING}
+					{foreach $langs as $l}
+						{var $inputName = 'parameter_' . $l . '_' . $k}
+						<div class="form-group">
+							{var $input = $paramsContainer->getComponent($inputName)}
+							{label $input /} {input $input, class=>'form-control'}&nbsp;
+						</div>
+					{/foreach}
+				{elseif $parameters[$k]->type == \App\Model\ORM\Parameter::TYPE_BOOLEAN}{* CHECKBOXES *}
+					{foreach $langs as $l}
+						{var $inputName = 'parameter_' . $l . '_' . $k}
+						{var $checked = !!$l}
+						<div class="form-group hidden">
+							{var $input = $paramsContainer->getComponent($inputName)}
+							{label $input /} {input $input, class=>'form-control'}&nbsp;
+						</div>
+					{/foreach}
+					<div class="form-group">
+						<label><input type="checkbox" class="js-parameter" {if $checked}checked="checked"{/if}>{$v}</label>
+					</div>
+				{/if}
+				<hr class="text-danger">
+			</div>
+		{/foreach}
+	</div>
+	{*****************************************************************************************************************}
+	{********* /PARAMS ***********************************************************************************************}
+	{*****************************************************************************************************************}
+
+
+	<div class="form-group">
+		{input sbmt, id => 'categoryCreateFormSubmit', data-naja-history => "off", class => 'btn btn-primary btn-sm ignore'}
+	</div>
+{/form}
+
+
+
+<script>
+	// data attributes to init select does not work. So do it in JS...
+	$('.bs-multi-select').selectpicker({
+		liveSearch: true,
+		liveSearchNormalize: true,
+		iconBase: 'fas',
+		tickIcon: 'fa-check',
+		size: 10
+	});
+
+	$('.js-parameter').on('change', function(e)
+	{
+		var that = $(this);
+		that.closest('.parameter-container').find('input').prop('checked', that.prop('checked'));
+	});
+
+	var parametersContainer = $('#parameters-container');
+	var parametersSelect = $('#frm-createForm-form-params');
+
+	parametersSelect.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+		var values = parametersSelect.val();
+		parametersContainer.find('.parameter-container').addClass('hidden');
+		values.forEach(function(val, index, array) {
+			var selector = '#param-' + val;
+			$(selector).removeClass('hidden');
+		});
+	});
+</script>
+
+{/snippet}

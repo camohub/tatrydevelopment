@@ -22,12 +22,14 @@ class ProductTable extends AbstractMigration
 				`parent` int(10) UNSIGNED DEFAULT NULL,
 				`price` decimal(10,2) UNSIGNED NOT NULL,
 				`stock` mediumint(9) DEFAULT NULL,
-				`priority` INT UNSIGNED NOT NULL DEFAULT \'1\'
+				`status` TINYINT UNSIGNED NOT NULL DEFAULT \'1\',
+				`priority` INT UNSIGNED NOT NULL DEFAULT \'1\',
 				`created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				`updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				`deleted` datetime DEFAULT NULL,
 				PRIMARY KEY (`id`),
-				KEY `products_parent_k` (`parent`)
+				KEY `products_parent_k` (`parent`),
+				KEY `products_status_k` (`status`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_slovak_ci;
 		');
 
@@ -45,6 +47,7 @@ class ProductTable extends AbstractMigration
 				`name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_slovak_ci NOT NULL,
 				`desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_slovak_ci NOT NULL,
 				PRIMARY KEY (`id`),
+				UNIQUE KEY `products_langs_lang_name_uk` (`name`,`lang`),
 				KEY `products_langs_product_id_k` (`product_id`)
 			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_slovak_ci;
 
