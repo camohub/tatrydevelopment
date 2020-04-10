@@ -14,7 +14,7 @@ use Nextras\Orm\Relationships\OneHasMany;
  * @property string                               $lang
  * @property string                               $value
  *
- * @property ManyHasOne|Product|NULL              $product          {m:1 Product::$parameters}
+ * @property ManyHasOne|Product|NULL              $product          {m:1 Product::$parameters, cascade=[persist, remove]}
  * @property ManyHasOne|Parameter|NULL            $parameter        {m:1 Parameter::$productsParameters}
  */
 class ProductParameter extends Entity

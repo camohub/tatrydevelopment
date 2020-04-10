@@ -27,8 +27,9 @@ use Tracy\Debugger;
  * @property OneHasMany|Product[]                  $adminProducts     {virtual}
  * @property OneHasMany|Product[]                  $products          {virtual}
  *
- * @property OneHasMany|ProductParameter[]|NULL    $parameters        {1:m ProductParameter::$product}
+ * @property OneHasMany|ProductParameter[]|NULL    $parameters        {1:m ProductParameter::$product, cascade=[persist, remove]}
  * @property ManyHasMany|Category[]|NULL           $categories        {m:m Category::$products}
+ * @property OneHasMany|ProductImage[]|NULL        $images            {1:m ProductImage::$product}
  */
 class Product extends Entity
 {

@@ -1,6 +1,7 @@
 {snippet createProductForm}
 
-{form form, class => 'ajax', data-naja-history => "off", id => 'createCategoryForm'}
+{*{form form, class => 'ajax', data-naja-history => "off", id => 'createCategoryForm'}*}
+{form form, id => 'createCategoryForm'}
 	<div n:if="$form->hasErrors()" class="alert alert-danger">
 		{foreach $form->getErrors() as $e}{$e}<br>{/foreach}
 	</div>
@@ -40,6 +41,11 @@
 		{label stock/} {input stock, class=>'form-control'}
 	</div>
 
+	<div class="form-group">
+		<span class="btn btn-sm btn-primary" id="js-files">Vyberte obrázky</span>
+		{input files, class=>'hidden', id=>"filesInput"}
+	</div>
+
 
 	{*****************************************************************************************************************}
 	{********* PARAMS ************************************************************************************************}
@@ -64,16 +70,17 @@
 						{var $inputName = 'parameter_' . $l . '_' . $k}
 						<div class="form-group">
 							{var $input = $paramsContainer->getComponent($inputName)}
-							{label $input /} {input $input, class=>'form-control'}&nbsp;
+							{label $input /} {input $input, class=>'form-control'}
 						</div>
 					{/foreach}
 				{elseif $parameters[$k]->type == \App\Model\ORM\Parameter::TYPE_BOOLEAN}{* CHECKBOXES *}
+					{var $checked = FALSE}{* Because of js-parameter *}
 					{foreach $langs as $l}
 						{var $inputName = 'parameter_' . $l . '_' . $k}
-						{var $checked = !!$l}
 						<div class="form-group hidden">
 							{var $input = $paramsContainer->getComponent($inputName)}
-							{label $input /} {input $input, class=>'form-control'}&nbsp;
+							{label $input /} {input $input, class=>'form-control'}
+							{if $input->isFilled()}{php $checked = TRUE}{/if}
 						</div>
 					{/foreach}
 					<div class="form-group">
@@ -90,6 +97,7 @@
 
 
 	<div class="form-group">
+		{*{input sbmt, id => 'categoryCreateFormSubmit', data-naja-history => "off", class => 'btn btn-primary btn-sm ignore'}*}
 		{input sbmt, id => 'categoryCreateFormSubmit', data-naja-history => "off", class => 'btn btn-primary btn-sm ignore'}
 	</div>
 {/form}
@@ -110,6 +118,11 @@
 	{
 		var that = $(this);
 		that.closest('.parameter-container').find('input').prop('checked', that.prop('checked'));
+	});
+
+	$('#js-files').on('click', function(e)
+	{
+		$('#filesInput').trigger('click');
 	});
 
 	var parametersContainer = $('#parameters-container');

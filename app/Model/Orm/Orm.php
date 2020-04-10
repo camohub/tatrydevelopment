@@ -23,6 +23,7 @@ use App\Model\Orm\ProductsRepository;
  * @property ParametersRepository $parameters
  * @property ParametersLangsRepository $parametersLangs
  * @property ProductsParametersRepository $productsParameters
+ * @property ProductsImagesRepository $productsImages
  */
 class Orm extends Model
 {

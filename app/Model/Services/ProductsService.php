@@ -10,6 +10,7 @@ use App\Model\Entity;
 use App\Model\Orm\Category;
 use App\Model\Orm\CategoryLang;
 use App\Model\Orm\Orm;
+use App\Model\Orm\Parameter;
 use App\Model\Orm\Product;
 use App\Model\Orm\ProductLang;
 use App\Model\Orm\ProductParameter;
@@ -93,37 +94,9 @@ class ProductsService
 
 
 	/**
-	 * @desc This method find all articles ids in blog_article_category which belongs to cat_ids
-	 * @param Entity\CategoryArticle $category
-	 * @return ResultSet
-	 */
-	public function findCategoryArticles( $category )
-	{
-		if( is_numeric( $category ) ) $category = $this->orm->categories->find( $category );
-
-		$cat_ids = $this->findCategoryTreeIds( $category );
-
-		$criteria = [ 'categories.id' => $cat_ids ];
-		$articles = $this->orm->categories->createQueryBuilder()
-			->select( 'a' )
-			->from( 'App\Model\Entity\Article', 'a' )
-			->whereCriteria( $criteria )
-			->orderBy( 'a.created', 'DESC' )
-			->getQuery();
-
-		// Returns ResultSet because of paginator.
-		return new ResultSet( $articles );
-	}
-
-
-	/**
-	 * @desc produces an array of categories in format required by form->select
-	 * @param array $products
-	 * @param array $result
-	 * @param int $lev
 	 * @return array
 	 */
-	public function productsToSelect( $products = NULL, $result = [], $lev = 0 )
+	public function productsToSelect()
 	{
 		return $this->orm->products->findAdminProducts()->fetchPairs('id', 'name');
 	}
@@ -222,20 +195,34 @@ class ProductsService
 	{
 		foreach ($product->parameters as $pp)
 		{
-			if( !in_array($pp->parameter->id, $values['params'] ) ) $product->parameters->remove($pp);
+			$product->parameters->remove($pp);
+			$this->orm->productsParameters->remove($pp);
+			$this->orm->productsParameters->persist($pp);
 		}
 
-		foreach ($values['params'] as $vp)
+		$parameters = $this->orm->parameters->findById($values['params'])->fetchPairs('id');
+
+		foreach ($parameters as $pId => $p)
 		{
 			foreach ($this->langsService->getLangs() as $l)
 			{
-				if( !empty($values['parameters']['parameter_' . $l . '_' . $vp]) )
+				if( $p->type == Parameter::TYPE_BOOLEAN )
 				{
 					$productParam = new ProductParameter();
 					$productParam->lang = $l;
-					$productParam->value = $values['parameters']['parameter_' . $l . '_' . $vp];
+					$productParam->value = $values['parameters']['parameter_' . $l . '_' . $pId] ? 1 : 0;  // "0" is ok (bool) makes FALSE
 					$productParam->product = $product;
-					$productParam->parameter = $vp;
+					$productParam->parameter = $p;
+					$this->orm->productsParameters->persist($productParam);
+					$product->parameters->add($productParam);
+				}
+				elseif( $p->type == Parameter::TYPE_STRING && !empty($values['parameters']['parameter_' . $l . '_' . $pId]) )
+				{
+					$productParam = new ProductParameter();
+					$productParam->lang = $l;
+					$productParam->value = $values['parameters']['parameter_' . $l . '_' . $pId];
+					$productParam->product = $product;
+					$productParam->parameter = $p;
 					$this->orm->productsParameters->persist($productParam);
 					$product->parameters->add($productParam);
 				}

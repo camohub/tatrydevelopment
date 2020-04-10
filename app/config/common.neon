@@ -41,6 +41,8 @@ services:
 	- App\Model\Services\CategoriesService
 	- App\Model\Services\ProductsService
 	- App\Model\Services\ParametersService
+	- App\Model\Services\UploadsProductsService(%wwwDir%)
+
 
 	#COMPONENTS
 	- App\Front\Components\IModalControlFactory

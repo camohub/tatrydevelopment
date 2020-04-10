@@ -11,6 +11,7 @@ use App\Model\Services\CategoriesService;
 use App\Model\Services\LangsService;
 use App\Model\Services\ParametersService;
 use App\Model\Services\ProductsService;
+use App\Model\Services\UploadsProductsService;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
@@ -42,6 +43,9 @@ class ProductCreateFormControl extends Control
 	/** @var  CategoriesService */
 	protected $categoriesService;
 
+	/** @var  UploadsProductsService */
+	protected $uploadsProductsService;
+
 	/** @var  LangsService */
 	protected $langsService;
 
@@ -50,13 +54,22 @@ class ProductCreateFormControl extends Control
 	protected $langs;
 
 
-	public function __construct( $id, Orm $orm, ProductsService $pS, ParametersService $parS, CategoriesService $cS, Translator $t, LangsService $lS )
-	{
+	public function __construct(
+		$id,
+		Orm $orm,
+		ProductsService $pS,
+		ParametersService $parS,
+		CategoriesService $cS,
+		UploadsProductsService $uPS,
+		Translator $t,
+		LangsService $lS
+	) {
 		$this->id = $id;
 		$this->orm = $orm;
 		$this->productsService = $pS;
 		$this->parametersService = $parS;
 		$this->categoriesService = $cS;
+		$this->uploadsProductsService = $uPS;
 		$this->translator = $t;
 		$this->langsService = $lS;
 
@@ -136,6 +149,9 @@ class ProductCreateFormControl extends Control
 		///////////////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////////////
 
+		$form->addMultiUpload( 'files', 'Vybrať obrázky' )
+			->addRule( $form::IMAGE, 'Niektorý z vybraných súborov nieje obrázok.' );
+
 
 		$form->addSubmit('sbmt', 'Uložiť')
 			->setHtmlAttribute('class', 'btn btn-primary btn-sm');
@@ -173,7 +189,7 @@ class ProductCreateFormControl extends Control
 		{
 			foreach ($values['params'] as $p)
 			{
-				if( empty($values['parameters']['parameter_sk_' . $p]) ) $form->addError('Vyplňte prosím parametre produktu. Každý vybraný parameter musí byť vyplnený aspoň v hlavnom jazyku.');
+				if( $this->parameters[$p]->type == Parameter::TYPE_STRING && empty($values['parameters']['parameter_sk_' . $p]) ) $form->addError('Vyplňte prosím parametre produktu. Každý vybraný textový parameter musí byť vyplnený aspoň v hlavnom jazyku.');
 			}
 		}
 
@@ -183,7 +199,7 @@ class ProductCreateFormControl extends Control
 	}
 
 
-	public function formSucceeded( Form $form, $values )
+	public function formSucceeded( Form $form )
 	{
 		if( $form['refresh']->isSubmittedBy() )
 		{
@@ -192,11 +208,20 @@ class ProductCreateFormControl extends Control
 		}
 
 		$presenter = $form->getPresenter();
-		$values = $presenter->isAjax() ? $form->getHttpData() : $values;
+		$values = $presenter->isAjax() ? $form->getHttpData() : $form->getValues(TRUE);
 
+		Debugger::barDump($values['files']);
 		try
 		{
-			$this->product ? $this->productsService->updateProduct($this->product, $values) : $this->productsService->createProduct( $values );
+			$this->product ? $this->productsService->updateProduct( $this->product, $values ) : $this->product = $this->productsService->createProduct( $values );
+			$uploadResult = $this->uploadsProductsService->saveProductImages( $this->product, $values['files'] );
+			if ( $uploadResult['errors'] )
+			{
+				foreach ( $uploadResult['errors'] as $e ) $presenter->flashDanger( $e );
+				$presenter->flashMessage('Produkt bol vytvorený.', 'success');
+				$this->redrawControl();
+				return $form;
+			}
 		}
 		catch ( DuplicateEntryException $e )
 		{

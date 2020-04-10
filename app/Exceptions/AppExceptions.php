@@ -57,5 +57,7 @@ class CategoryContainsProductsException extends \Exception
 	public $categoryName = '';
 }
 
+class FileUploadCreateDirectoryException extends \Exception {}
+
 
 
