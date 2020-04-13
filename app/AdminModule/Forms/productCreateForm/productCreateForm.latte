@@ -46,6 +46,15 @@
 		{input files, class=>'hidden', id=>"filesInput"}
 	</div>
 
+	<div class="row" n:if="$product && $product->images->countStored()">
+		{foreach $product->images as $img}
+			<div class="col-xs-12 col-lg-3">
+				<img src="{$basePath}/uploads/eshop/products/{$product->id}/thumbnails/{$img->file}" style="max-width: 100%"><br>
+				<a n:href="deleteImage!, id=>$img->id, productId=>$product->id" class="js-delete-img ajax" data-naja-history="off">delete</a>
+			</div>
+		{/foreach}
+	</div>
+
 
 	{*****************************************************************************************************************}
 	{********* PARAMS ************************************************************************************************}
@@ -120,9 +129,14 @@
 		that.closest('.parameter-container').find('input').prop('checked', that.prop('checked'));
 	});
 
-	$('#js-files').on('click', function(e)
+	var jsFileBtn = $('#js-files');
+	var filesInput = $('#filesInput');
+	jsFileBtn.on('click', function(e)
 	{
-		$('#filesInput').trigger('click');
+		filesInput.trigger('click');
+	});
+	filesInput.on('change', function (e) {
+		jsFileBtn.text( jsFileBtn.text() + ' - vybrané ' + filesInput[0].files.length)
 	});
 
 	var parametersContainer = $('#parameters-container');

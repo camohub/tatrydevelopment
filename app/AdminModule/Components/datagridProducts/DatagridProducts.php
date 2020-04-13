@@ -5,9 +5,12 @@ namespace App\Admin\Components;
 
 use App\Admin\Forms\ProductCreateFormControl;
 use App\Model\Orm\Orm;
+use App\Model\Orm\Product;
+use App\Model\Services\ProductsService;
 use App\Presenters\BasePresenter;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Control;
+use Nextras\Orm\Collection\Collection;
 use Nextras\Orm\Mapper\Dbal\DbalCollection;
 use Tracy\Debugger;
 use Ublaboo\DataGrid\Column\Action\Confirmation\StringConfirmation;
@@ -19,14 +22,20 @@ class DatagridProductsControl extends Control
 
 	public $id;
 
+	/** @var Translator  */
 	public $translator;
 
+	/** @var ProductsService  */
+	public $productsService;
+
+	/** @var Orm  */
 	public $orm;
 
 
-	public function __construct($id = NULL, Orm $orm , Translator $t)
+	public function __construct($id = NULL, Orm $orm , ProductsService $pS, Translator $t)
 	{
 		$this->translator = $t;
+		$this->productsService = $pS;
 		$this->orm = $orm;
 		$this->id = $id;
 	}
@@ -44,13 +53,15 @@ class DatagridProductsControl extends Control
 		$cDomain = 'components.datagridProducts';
 		$grid = new DataGrid($this, 'grid');
 		$grid->setTranslator($this->translator);
-		$grid->setDataSource($this->orm->products->findAdminProducts());
+		$grid->setDataSource($this->orm->products->findAdminSkProducts());
 		$grid->setDefaultPerPage(20);
 		$grid::$iconPrefix = 'fa fa-';
 
 		$this->setId($grid, $cDomain);
 		$this->setName($grid, $cDomain);
-		$this->setActive($grid, $cDomain);
+		$this->setPrice($grid, $cDomain);
+		$this->setStock($grid, $cDomain);
+		$this->setStatus($grid, $cDomain);
 		$this->setCreated($grid, $cDomain);
 		$this->setActionEdit($grid, $cDomain);
 		$this->setActionDelete($grid, $cDomain);
@@ -61,7 +72,7 @@ class DatagridProductsControl extends Control
 
 	protected function setName(DataGrid $grid, $cDomain)
 	{
-		$grid->addColumnText('name', "$cDomain.name")
+		$grid->addColumnText('name', "$cDomain.name", "langs.name")
 			->setTemplateEscaping(FALSE)
 			->setRenderer(function ($item) {
 				return '<b>' . $item->name . '</b>';
@@ -69,57 +80,45 @@ class DatagridProductsControl extends Control
 			->setSortable()
 			->setFilterText('name')
 			->setCondition(function ($collection, $value) {
-				$collection->getQueryBuilder()->andWhere('name LIKE %s', "%$value%");
+				/** @var DbalCollection $collection */
+				$collection->getQueryBuilder()
+					->innerJoin('products', 'products_langs', 'langs', 'products.id = langs.product_id')
+					->andWhere('langs.name LIKE %s', "%$value%");
 			});
 	}
 
 
-	protected function setEmail(DataGrid $grid, $cDomain)
+	protected function setPrice(DataGrid $grid, $cDomain)
 	{
-		$grid->addColumnText('email', "$cDomain.name")
-			/*->setTemplateEscaping(FALSE)
-			->setRenderer(function ($item) {
-				return '<b>' . $item->email . '</b>';
-			})*/
-			->setSortable()
-			->setFilterText('email')
-			->setCondition(function ($collection, $value) {
-				$collection->getQueryBuilder()->andWhere('email LIKE %s', "%$value%");
-			});
+		$grid->addColumnText('price', "$cDomain.price");
 	}
 
 
-	protected function setActive(DataGrid $grid, $cDomain)
+	protected function setStock(DataGrid $grid, $cDomain)
 	{
-		$grid->addColumnStatus('active', "$cDomain.active", 'active')
-			->addOption(true, "$cDomain.active")
+		$grid->addColumnNumber('stock', "$cDomain.stock")
+			->setSortable();
+	}
+
+	protected function setStatus(DataGrid $grid, $cDomain)
+	{
+		$grid->addColumnStatus('status', "$cDomain.statusActive")
+			->addOption(1, "$cDomain.statusActive")
 			->setClass('btn-success')
 			->endOption()
-			->addOption(false, "$cDomain.inactive")
+			->addOption(2, "$cDomain.statusInactive")
 			->setClass('btn-danger')
 			->endOption()
-			->setFilterSelect([
-				2 => $this->translator->translate("$cDomain.activeAll"),
-				0 => $this->translator->translate("$cDomain.active0"),
-				1 => $this->translator->translate("$cDomain.active1")
+			->onChange[] = [$this, 'statusChange'];
+
+		$grid->addFilterSelect('status', 'status', [
+				3 => $this->translator->translate("$cDomain.statusAll"),
+				1 => $this->translator->translate("$cDomain.statusActive"),
+				2 => $this->translator->translate("$cDomain.statusInactive"),
 			], 'active')
 			->setCondition(function ($collection, $value) {
-				// TODO: filter throws an error??? Still alive????
-				if( (int)$value != 2 ) $collection->getQueryBuilder()->andWhere('active = %i', (int)$value);
-			})
-			->onChange[] = [$this, 'activeChange'];
-	}
-
-
-	public function activeChange($id, $newValue)
-	{
-		$product = $this->orm->products->getById($id);
-		$product->active = (bool)$newValue;
-		$this->orm->products->persistAndFlush($product);
-
-		if ($this->getPresenter()->isAjax()) {
-			$this['grid']->redrawItem($id);
-		}
+				if( (int)$value != 3 ) $collection->getQueryBuilder()->andWhere('status = %i', (int)$value);
+			});
 	}
 
 
@@ -136,6 +135,14 @@ class DatagridProductsControl extends Control
 	}
 
 
+	protected function setActionEdit(DataGrid $grid, $cDomain)
+	{
+		$grid->addAction(':Admin:Products:create', "$cDomain.edit")
+			->setTitle("$cDomain.edit")
+			->setIcon('edit');
+	}
+
+
 	protected function setActionDelete(DataGrid $grid, $cDomain)
 	{
 		$grid->addAction('deleteProduct!', "")
@@ -147,13 +154,9 @@ class DatagridProductsControl extends Control
 	}
 
 
-	protected function setActionEdit(DataGrid $grid, $cDomain)
-	{
-		$grid->addAction(':Admin:Products:create', "$cDomain.edit")
-			->setTitle("$cDomain.edit")
-			->setIcon('edit');
-	}
-
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	//////// HANDLERS ////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public function handleDeleteProduct($id)
 	{
@@ -162,6 +165,7 @@ class DatagridProductsControl extends Control
 		if( $product = $this->orm->products->getById($id) )
 		{
 			$product->deleted = 'now';
+			$product->status = Product::STATUS_DELETED;
 			$this->orm->products->persistAndFlush($product);
 		}
 
@@ -176,7 +180,20 @@ class DatagridProductsControl extends Control
 			$presenter->redirect('this');
 		}
 	}
+
+
+	public function statusChange($id, $value)
+	{
+		$this->productsService->updateStatus($id, $value);
+
+		if ($this->getPresenter()->isAjax()) {
+			$this['grid']->redrawItem($id);
+		}
+	}
 }
+
+
+
 
 interface IDatagridProductsControlFactory
 {

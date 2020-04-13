@@ -18,6 +18,7 @@ use Tracy\Debugger;
  * @property-read string                           $name              {virtual}
  * @property float                                 $price
  * @property int|NULL                              $stock             {default NULL}
+ * @property int                                   $status            {default 1}
  * @property int                                   $priority          {default 1}
  * @property DateTimeImmutable                     $created           {default now}
  * @property DateTimeImmutable                     $updated           {default now}
@@ -33,8 +34,8 @@ use Tracy\Debugger;
  */
 class Product extends Entity
 {
-	const STATUS_UNPUBLISHED = 1;
-	const STATUS_PUBLISHED = 2;
+	const STATUS_PUBLISHED = 1;
+	const STATUS_UNPUBLISHED = 2;
 	const STATUS_DELETED = 3;
 
 

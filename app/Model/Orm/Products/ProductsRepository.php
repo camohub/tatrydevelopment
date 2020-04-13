@@ -19,4 +19,10 @@ class ProductsRepository extends Repository
 	{
 		return $this->findBy(['parent' => NULL])->orderBy(['priority' => 'ASC']);
 	}
+
+
+	public function findAdminSkProducts()
+	{
+		return $this->findBy(['parent' => NULL, 'this->langs->lang' => 'sk', 'status!=' => Product::STATUS_DELETED])->orderBy(['priority' => 'ASC']);
+	}
 }

@@ -31,12 +31,13 @@ class UploadsProductsService
 	{
 		$this->orm = $orm;
 		$this->www_dir = $www_dir;
+		$this->path = $this->www_dir . self::PATH;
 	}
 
 
 	public function saveProductImages( Product $product, $files )
 	{
-		$path = $this->www_dir . self::PATH . '/' .$product->id;
+		$path = $this->path . '/' .$product->id;
 
 		try
 		{
@@ -113,6 +114,15 @@ class UploadsProductsService
 		}
 
 		return $result;
+	}
+
+
+	public function deleteById($id, $productId)
+	{
+		$image = $this->orm->productsImages->getBy(['id' => $id, 'product' => $productId]);
+		Debugger::barDump($image);
+		$this->unlink($this->path . '/' . $productId, $image->file);
+		$this->orm->productsImages->removeAndFlush($image);
 	}
 
 ///// PROTECTED /////////////////////////////////////////////////////////////////////////////////////

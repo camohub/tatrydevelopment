@@ -22,12 +22,12 @@ datagridUsers:
 datagridProducts:
 	id: ID
 	name: Názov
+	price: Cena
+	stock: Skladom
 	created: Vytvorený
-	active: Aktívny
-	inactive: Neaktívny
-	activeAll: všetky
-	active1: aktívny
-	active0: neaktívny
+	statusAll: všetky
+	statusActive: Aktívny
+	statusInactive: Neaktívny
 	delete: Zmazať
 	confirmDelete: Naozaj chcete zmazať produkt %s?
 	deleteSuccess: Položka bola zmazaná

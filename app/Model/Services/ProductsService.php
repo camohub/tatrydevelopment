@@ -258,6 +258,17 @@ class ProductsService
 	}
 
 
+	public function updateStatus( $id, $value )
+	{
+		$product = $this->orm->products->getById($id);
+		$product->status = (int)$value;
+		$this->orm->products->persistAndFlush($product);
+		Debugger::log($product->status);
+
+		return $product;
+	}
+
+
 	/**
 	 * @param array $arr
 	 * @return bool

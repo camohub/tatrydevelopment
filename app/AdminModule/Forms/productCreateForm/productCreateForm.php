@@ -84,6 +84,7 @@ class ProductCreateFormControl extends Control
 	{
 		$this->getPresenter()->setReferer(self::class);
 		$this->template->setFile( __DIR__ . '/productCreateForm.latte' );
+		$this->template->product = $this->product;
 		$this->template->langs = $this->langs;
 		$this->template->parametersToSelect = $this->parametersToSelect;
 		$this->template->parameters = $this->parameters;
@@ -276,6 +277,13 @@ class ProductCreateFormControl extends Control
 
 		$form['price']->setDefaultValue($this->product->price);
 		$form['stock']->setDefaultValue($this->product->stock);
+	}
+
+
+	public function handleDeleteImage($id, $productId)
+	{
+		$this->redrawControl();
+		$this->uploadsProductsService->deleteById($id, $productId);
 	}
 
 }
