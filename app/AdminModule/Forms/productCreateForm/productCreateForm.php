@@ -211,7 +211,6 @@ class ProductCreateFormControl extends Control
 		$presenter = $form->getPresenter();
 		$values = $presenter->isAjax() ? $form->getHttpData() : $form->getValues(TRUE);
 
-		Debugger::barDump($values['files']);
 		try
 		{
 			$this->product ? $this->productsService->updateProduct( $this->product, $values ) : $this->product = $this->productsService->createProduct( $values );

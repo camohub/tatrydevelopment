@@ -129,14 +129,14 @@
 		that.closest('.parameter-container').find('input').prop('checked', that.prop('checked'));
 	});
 
-	var jsFileBtn = $('#js-files');
+	var jsFilesBtn = $('#js-files');
 	var filesInput = $('#filesInput');
-	jsFileBtn.on('click', function(e)
+	jsFilesBtn.on('click', function(e)
 	{
 		filesInput.trigger('click');
 	});
 	filesInput.on('change', function (e) {
-		jsFileBtn.text( jsFileBtn.text() + ' - vybrané ' + filesInput[0].files.length)
+		checkFileSize(filesInput, jsFilesBtn);
 	});
 
 	var parametersContainer = $('#parameters-container');
@@ -150,6 +150,39 @@
 			$(selector).removeClass('hidden');
 		});
 	});
+
+	function checkFileSize(jqInput, jsFilesBtn)
+	{
+		jsFilesBtn.text('Vyberte obrázky');
+		// (Can't use `typeof FileReader === "function"` because apparently
+		// it comes back as "object" on some browsers. So just see if it's there
+		// at all.)
+		if (!window.FileReader) {
+			console.log('The file API is not supported on this browser yet.');
+			return;
+		}
+
+		var size = 0;
+		input = jqInput[0];
+
+		if (!input || !input.files || input.files.length < 1) {
+			console.log('There are no files selected.');
+			return;
+		}
+		else {
+			Array.from(input.files).forEach(function(file) {
+				size += file.size;
+			});
+
+			if( size > 9800000 ) {
+				alert('Veľkosť obrázkov presiahla povolený limit 10MB.');
+				input.value = '';
+				return;
+			}
+
+			jsFilesBtn.text(jsFilesBtn.text() + ' - vybrané ' + input.files.length);
+		}
+	}
 </script>
 
 {/snippet}
