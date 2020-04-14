@@ -13,5 +13,11 @@ default:
 		block-2-1: 'Selénium testy pre vaše webové aplikácie a REST API.'
 		block-2-2: 'Naprogramovanie 15eur/hod a následné spúštanie + chybové reporty. 10eur/deň'
 
+eshop:
+	default:
+		price: cena
+		stock: skladom
+		params: Parametre
+
 test:
 	x: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'

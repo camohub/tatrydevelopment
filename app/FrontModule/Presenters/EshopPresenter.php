@@ -32,7 +32,7 @@ class EshopPresenter extends BasePresenter
 
 	public function actionDefault($id = '')
 	{
-		$category = $this->orm->categories->getBy(['this->langs->name' => $id]);
+		$category = $this->orm->categories->getBy(['this->langs->slug' => $id]);
 		$products = $this->categoriesService->findCategoryProducts($category);
 
 		$this->template->products = $products;
@@ -41,6 +41,12 @@ class EshopPresenter extends BasePresenter
 		{
 
 		}
+	}
+
+
+	public function actionDetail($id)
+	{
+		$this->template->product = $this->orm->products->getById($id);
 	}
 
 

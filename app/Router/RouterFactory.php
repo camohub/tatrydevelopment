@@ -58,12 +58,12 @@ final class RouterFactory
 			],
 			NULL => [
 				Route::FILTER_IN => function ($params) {
-					Debugger::barDump($params, 'IN');
+					//Debugger::barDump($params, 'IN');
 					$params['presenter'] = 'Default';
 					return $params;
 				},
 				Route::FILTER_OUT => function ($params) {
-					Debugger::barDump( $params, 'OUT' );
+					//Debugger::barDump( $params, 'OUT' );
 					$locale = $params['locale'] ?? 'sk';
 					$tr = ['sk' => 'ponuka', 'cs' => 'ponuka', 'en' => 'offer'];
 					$params['presenter'] = $tr[$locale];

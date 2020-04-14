@@ -91,13 +91,14 @@ body {
   min-height: 100%;
   background-color: #fff;
   color: #2d2d2d;
-  font-family: 'Cinzel Decorative', serif;
+  font-family: Helvetica Verdana;
   font-size: 25px;
   transition-property: color;
   transition-duration: 1s;
   transition-timing-function: ease;
 }
 body.body-default {
+  font-family: 'Cinzel Decorative', serif;
   background-color: #0f1225;
   color: #948aad;
   transition-property: color;
@@ -229,13 +230,28 @@ small {
 .btn {
   padding: 6px 20px;
 }
+a.default-product,
 .default-product {
+  display: block;
+  text-decoration: none;
+  color: #2d2d2d;
   height: 400px;
   padding: 7px;
   margin: 8px -7px;
-  border: 1px solid #337ab7;
+  border: 1px solid #c2ccec;
+  box-shadow: 0 0 5px #ebe9ec;
   overflow: hidden;
+  font-size: 20px;
+  font-family: Helvetica Verdana;
 }
+a.default-product h2,
+.default-product h2 {
+  font-size: 24px;
+  padding: 0;
+  margin: 7px 0 14px 0;
+  font-weight: bold;
+}
+a.default-product img,
 .default-product img {
   max-width: 100%;
 }

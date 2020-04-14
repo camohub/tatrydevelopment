@@ -13,22 +13,24 @@
 				<a n:href=":Front:Default:default">Home</a>
 				{control eshopCategories}
 			</div>
-		</div>
-		<div class="row">
-			{foreach $products as $p}
-				<div class="col-xs-2 col-sm-6 col-lg-3">
-					<div class="default-product">
-						{if $p->images->countStored()}
-							{var $img = $p->images->get()->fetch()}
-							<img src="{$basePath}/uploads/eshop/products/{$p->id}/mediums/{$img->file}" alt="{$img->file}">
-						{/if}
-						<div>{$p->name}</div>
-						<div>{$p->price}</div>
-						<div>{$p->stock}</div>
-						<div>{$p->desc}</div>
-					</div>
+			<div class="col-xs-12 col-lg-9">
+				<div class="row">
+					{foreach $products as $p}
+						<div class="col-xs-2 col-sm-6 col-lg-4">
+							<a n:href=":Front:Eshop:detail $p->id" class="default-product">
+								{if $p->images->countStored()}
+									{var $img = $p->images->get()->fetch()}
+									<img src="{$basePath}/uploads/eshop/products/{$p->id}/mediums/{$img->file}" alt="{$img->file}">
+								{/if}
+								<div><h2>{$p->name}</h2></div>
+								<div>{_price}: {$p->price}&#x20AC;</div>
+								<div>{_stock}: {$p->stock}</div>
+								<div>{$p->desc|truncate:80}</div>
+							</a>
+						</div>
+					{/foreach}
 				</div>
-			{/foreach}
+			</div>
 		</div>
 	</div>
 </div>

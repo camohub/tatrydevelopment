@@ -28,6 +28,7 @@ use Nextras\Orm\Relationships\OneHasMany;
  * @property OneHasMany|Product[]                  $products          {virtual}
  *
  * @property OneHasMany|ProductParameter[]|NULL    $parameters        {1:m ProductParameter::$product, cascade=[persist, remove]}
+ * @property OneHasMany|ProductParameter[]|NULL    $localParameters  {virtual}
  * @property ManyHasMany|Category[]|NULL           $categories        {m:m Category::$products}
  * @property OneHasMany|ProductImage[]|NULL        $images            {1:m ProductImage::$product}
  */
@@ -65,6 +66,12 @@ class Product extends Entity
 	public function getterProducts()
 	{
 		return $this->allProducts->get()->findBy(['status' => self::STATUS_PUBLISHED]);
+	}
+
+
+	public function getterLocalParameters()
+	{
+		return $this->parameters->get()->findBy(['lang' => BasePresenter::$staticLocale]);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

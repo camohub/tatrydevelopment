@@ -15,7 +15,7 @@
 				{foreach $categories as $item}
 					<li n:if="$item->status === \App\Model\Orm\Category::STATUS_PUBLISHED" id="{$item->id}">
 						{var $lang = $item->langs->get()->getBy(['lang' => $lang_code])}
-						<a href="{plink :Front:Eshop:default, id => $lang->name}">{$lang->name}</a>
+						<a href="{plink :Front:Eshop:default, id => $lang->slug}">{$lang->name}</a>
 						{if $categories = $categoriesRepository->findBy(['parent' => $item->id])->orderBy(['priority' => 'ASC'])}
 							{include menu, categories => $categories, lang_code => $lang_code } {* RECURSION *}
 						{/if}

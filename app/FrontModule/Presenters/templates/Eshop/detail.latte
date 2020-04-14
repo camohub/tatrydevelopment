@@ -1,0 +1,56 @@
+
+{block content}
+
+{translator templates.eshop.default}
+
+<div class="white-wrapper">
+	<div class="container">
+		<div class="row">
+			<h2 class="col-xs-12 brand">Tatry Development - eshop</h2>
+		</div>
+		<div class="row">
+			<div id="mainMenu" class="col-xs-12 col-lg-3">
+				<a n:href=":Front:Default:default">Home</a>
+				{control eshopCategories}
+			</div>
+			<div class="col-xs-12 col-lg-9">
+				<div id="detailProduct">
+					{if $product->images->countStored()}
+						{var $img = $product->images->get()->fetch()}
+						<img src="{$basePath}/uploads/eshop/products/{$product->id}/mediums/{$img->file}" alt="{$img->file}">
+					{/if}
+					<div class="mar-3">
+						{foreach $product->images as $img}
+							<img src="{$basePath}/uploads/eshop/products/{$product->id}/thumbnails/{$img->file}">
+						{/foreach}
+					</div>
+					<div><h2>{$product->name}</h2></div>
+					<div>{_price}: {$product->price}&#x20AC;</div>
+					<div>{_stock}: {$product->stock}</div>
+					<div>{$product->desc|truncate:80}</div>
+
+
+					<div id="parameters" class="mar-3">
+						<b>{_params}</b><br>
+						{foreach $product->localParameters as $param}
+							<div>{$param->value}</div>
+						{/foreach}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{/translator}
+
+<script>
+$(function() {
+	$('span.anchor').on('click', function(e)
+	{
+		$(this).next('div.slide-block-1').slideToggle();
+	})
+});
+</script>
+
+{/block}
