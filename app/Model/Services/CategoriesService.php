@@ -10,17 +10,10 @@ use App\Model\Entity;
 use App\Model\Orm\Category;
 use App\Model\Orm\CategoryLang;
 use App\Model\Orm\Orm;
-use App\Model\Repositories\ArticlesRepository;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Kdyby\Doctrine\EntityManager;
-use Kdyby\Doctrine\EntityRepository;
-use Kdyby\Doctrine\ResultSet;
+use App\Model\Orm\Product;
 use Kdyby\Translation\Translator;
 use Nette;
 use Nette\Utils\Strings;
-use App\Model\Repositories\CategoriesArticlesRepository;
-use App\Model\Repositories\ArticlesCategoriesArticlesRepository;
-use Tracy\Debugger;
 
 
 class CategoriesService
@@ -43,19 +36,24 @@ class CategoriesService
 	/** @var Translator */
 	protected $translator;
 
+	/** @var LangsService */
+	protected $langsService;
+
 
 	/**
 	 * CategoriesService constructor.
 	 * @param Orm $orm
 	 * @param Nette\Caching\IStorage $s
 	 * @param Translator $tr
+	 * @param LangsService $lS
 	 */
-	public function __construct( Orm $orm, Nette\Caching\IStorage $s, Translator $tr )
+	public function __construct( Orm $orm, Nette\Caching\IStorage $s, Translator $tr, LangsService $lS )
 	{
 		$this->orm = $orm;
 		$this->storage = $s;
 		$this->cache = new Nette\Caching\Cache( $this->storage, self::CACHE );
 		$this->translator = $tr;
+		$this->langsService = $lS;
 	}
 
 
@@ -76,20 +74,19 @@ class CategoriesService
 
 
 	/**
-	 * @desc Find ids of category and nested categories.
-	 * @param Entity\CategoryArticle $category
-	 * @param $ids array
+	 * @param Category $category
+	 * @param array $ids
 	 * @return array
 	 */
-	public function findCategoryTreeIds( Entity\CategoryArticle $category, array $ids = [] )
+	public function findCategoryTreeIds( Category $category, array $ids = [] )
 	{
-		$ids[] = $category->getId();
+		$ids[] = $category->id;
 
-		if ( $children = $this->orm->categories->findBy(['parent' => $category->getId()]))
+		if ( $category->categories->countStored() )
 		{
-			foreach ( $children as $child )
+			foreach ( $category->categories as $c )
 			{
-				$ids = $this->findCategoryTreeIds( $child, $ids );
+				$ids = $this->findCategoryTreeIds( $c, $ids );
 			}
 		}
 
@@ -98,26 +95,18 @@ class CategoriesService
 
 
 	/**
-	 * @desc This method find all articles ids in blog_article_category which belongs to cat_ids
-	 * @param Entity\CategoryArticle $category
+	 * @param $category
 	 * @return ResultSet
 	 */
-	public function findCategoryArticles( $category )
+	public function findCategoryProducts( $category )
 	{
-		if( is_numeric( $category ) ) $category = $this->orm->categories->find( $category );
+		if( is_numeric( $category ) ) $category = $this->orm->categories->getById( $category );
 
-		$cat_ids = $this->findCategoryTreeIds( $category );
+		$catIds = $this->findCategoryTreeIds( $category );
 
-		$criteria = [ 'categories.id' => $cat_ids ];
-		$articles = $this->orm->categories->createQueryBuilder()
-			->select( 'a' )
-			->from( 'App\Model\Entity\Article', 'a' )
-			->whereCriteria( $criteria )
-			->orderBy( 'a.created', 'DESC' )
-			->getQuery();
+		$products = $this->orm->products->findBy(['status' => Product::STATUS_PUBLISHED, 'this->categories->id' => $catIds]);
 
-		// Returns ResultSet because of paginator.
-		return new ResultSet( $articles );
+		return $products;
 	}
 
 
@@ -175,12 +164,11 @@ class CategoriesService
 			$category->status = Category::STATUS_UNPUBLISHED;
 			$this->orm->categories->persist($category);
 
-			foreach ( $this->translator->getAvailableLocales() as $lang )
+			foreach ( $this->langsService->getLangs() as $lang )
 			{
-				$lang = strtolower(explode('_', $lang)[0]);
-
 				$category_lang = new CategoryLang();
 				$category_lang->name = $params['names'][$lang];
+				$category_lang->slug = Strings::webalize($category_lang->name);
 				$category_lang->lang = $lang;
 				$this->orm->categoriesLangs->persist($category_lang);
 				$category->langs->add($category_lang);
@@ -192,6 +180,8 @@ class CategoriesService
 		{
 			throw new App\Exceptions\DuplicateEntryException();
 		}
+
+		$this->cleanCache();
 
 		return $category;
 	}
@@ -212,6 +202,7 @@ class CategoriesService
 			foreach ( $category->langs as $lang )
 			{
 				$lang->name = $names[$lang->lang];
+				$lang->slug = Strings::webalize($lang->name);
 				$this->orm->categoriesLangs->persistAndFlush( $lang );
 			}
 		}
@@ -219,6 +210,8 @@ class CategoriesService
 		{
 			throw new App\Exceptions\DuplicateEntryException( 'Kategória s rovnakým názvom už exituje. Názov musí byť v každnom jazyku unikátny.' );
 		}
+
+		$this->cleanCache();
 
 		return $category;
 
@@ -280,7 +273,7 @@ class CategoriesService
 
 	public function cleanCache()
 	{
-		$langs = $this->translator->getAvailableLocales();
+		$langs = $this->langsService->getLangs();
 		foreach ( $langs as $lang ) $this->cache->clean( [ Nette\Caching\Cache::TAGS => [ self::CACHE_TAG . $lang ] ] );
 	}
 

@@ -33,8 +33,10 @@ class Categories extends AbstractMigration
 				`category_id` int(10) UNSIGNED DEFAULT NULL,
 				`lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_slovak_ci NOT NULL,
 				`name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_slovak_ci NOT NULL,
+				`slug` VARCHAR(50) NOT NULL,
 				PRIMARY KEY (`id`),
-				UNIQUE KEY `categories_langs_name_lang_uk` (`name`,`lang`),
+				UNIQUE KEY `categories_langs_slug_lang_uk` (`slug`,`lang`),
+				KEY `categories_langs_slug_k` (`slug`),
 				KEY `categories_langs_category_id_k` (`category_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_slovak_ci
 		');

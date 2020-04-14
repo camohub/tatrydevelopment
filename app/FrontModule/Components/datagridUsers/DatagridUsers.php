@@ -142,7 +142,9 @@ class DatagridUsersControl extends Control
 			->addOption(false, "$cDomain.inactive")
 			->setClass('btn-danger')
 			->endOption()
-			->setFilterSelect([
+			->onChange[] = [$this, 'activeChange'];
+
+		$grid->addFilterSelect('status', 'status', [
 				2 => $this->translator->translate("$cDomain.activeAll"),
 				0 => $this->translator->translate("$cDomain.active0"),
 				1 => $this->translator->translate("$cDomain.active1")
@@ -150,8 +152,7 @@ class DatagridUsersControl extends Control
 			->setCondition(function ($collection, $value) {
 				// TODO: filter throws an error??? Still alive????
 				if( (int)$value != 2 ) $collection->getQueryBuilder()->andWhere('active = %i', (int)$value);
-			})
-			->onChange[] = [$this, 'activeChange'];
+			});
 	}
 
 

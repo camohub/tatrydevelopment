@@ -25,8 +25,8 @@ use Nextras\Orm\Relationships\OneHasMany;
  */
 class Category extends Entity
 {
-	const STATUS_UNPUBLISHED = 1;
-	const STATUS_PUBLISHED = 2;
+	const STATUS_PUBLISHED = 1;
+	const STATUS_UNPUBLISHED = 2;
 	const STATUS_DELETED = 3;
 
 

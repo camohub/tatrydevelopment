@@ -1,3 +1,5 @@
+@import "colors.less";
+
 html {
 	height: 100%;
 	box-sizing: border-box;
@@ -14,10 +16,18 @@ body {
 	margin: 0;
 	padding-bottom: 6rem;
 	min-height: 100%;
-	background-color: #0f1225;
-	color: #948aad;
+	background-color: @color-1;
+	color: @color-2;
 	font-family: 'Cinzel Decorative', serif;
 	font-size: 25px;
+	transition-property: color;
+	transition-duration: 1s;
+	transition-timing-function: ease;
+}
+
+body.body-default {
+	background-color: #0f1225;
+	color: #948aad;
 	transition-property: color;
 	transition-duration: 1s;
 	transition-timing-function: ease;
@@ -161,6 +171,17 @@ small {
 
 .btn {
 	padding: 6px 20px;
+}
+
+.default-product {
+	height: 300px;
+	padding: 7px;
+	margin: 8px -7px;
+	border: 1px solid @color-6;
+
+	img {
+		max-width: 100%;
+	}
 }
 
 

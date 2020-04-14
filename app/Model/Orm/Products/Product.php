@@ -5,10 +5,8 @@ namespace App\Model\Orm;
 use App\Presenters\BasePresenter;
 use DateTimeImmutable;
 use Nextras\Orm\Entity\Entity;
-use Nextras\Orm\Mapper\Dbal\DbalCollection;
 use Nextras\Orm\Relationships\ManyHasMany;
 use Nextras\Orm\Relationships\OneHasMany;
-use Tracy\Debugger;
 
 
 /**
@@ -16,6 +14,7 @@ use Tracy\Debugger;
  * @property Product|NULL                          $parent            {m:1 Product::$allProducts}
  * @property ProductLang[]                         $langs             {1:m ProductLang::$product}
  * @property-read string                           $name              {virtual}
+ * @property-read string                           $desc              {virtual}
  * @property float                                 $price
  * @property int|NULL                              $stock             {default NULL}
  * @property int                                   $status            {default 1}
@@ -45,6 +44,15 @@ class Product extends Entity
 		if( !$lang || !$lang->name ) $lang = $this->langs->get()->getBy(['lang' => 'sk']);
 
 		return $lang->name;
+	}
+
+
+	public function getterDesc()
+	{
+		$lang = $this->langs->get()->getBy(['lang' => BasePresenter::$staticLocale]);
+		if( !$lang || !$lang->desc ) $lang = $this->langs->get()->getBy(['lang' => 'sk']);
+
+		return $lang->desc;
 	}
 
 

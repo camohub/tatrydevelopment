@@ -47,6 +47,7 @@ services:
 	#COMPONENTS
 	- App\Front\Components\IModalControlFactory
 	- App\Front\Components\ITestControlFactory
+	- App\Front\Components\IEshopCategoriesControlFactory
 
 	#FORMS
 	- App\Front\Components\ISignInFormControlFactory

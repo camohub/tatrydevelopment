@@ -1,0 +1,47 @@
+
+{block content}
+
+{translator templates.eshop.default}
+
+<div class="white-wrapper">
+	<div class="container">
+		<div class="row">
+			<h2 class="col-xs-12 brand">Tatry Development - eshop</h2>
+		</div>
+		<div class="row">
+			<div id="mainMenu" class="col-xs-12 col-lg-3">
+				<a n:href=":Front:Default:default">Home</a>
+				{control eshopCategories}
+			</div>
+		</div>
+		<div class="row">
+			{foreach $products as $p}
+				<div class="col-xs-2 col-sm-6 col-lg-3">
+					<div class="default-product">
+						{if $p->images->countStored()}
+							{var $img = $p->images->get()->fetch()}
+							<img src="{$basePath}/uploads/eshop/products/{$p->id}/mediums/{$img->file}" alt="{$img->file}">
+						{/if}
+						<div>{$p->name}</div>
+						<div>{$p->price}</div>
+						<div>{$p->stock}</div>
+						<div>{$p->desc}</div>
+					</div>
+				</div>
+			{/foreach}
+		</div>
+	</div>
+</div>
+
+{/translator}
+
+<script>
+$(function() {
+	$('span.anchor').on('click', function(e)
+	{
+		$(this).next('div.slide-block-1').slideToggle();
+	})
+});
+</script>
+
+{/block}
