@@ -150,6 +150,9 @@ class ProductCreateFormControl extends Control
 		///////////////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////////////
 
+		$form->addUpload('mainFile', 'Vyberte hlavný obrázok.')
+			->addRule( $form::IMAGE, 'Súbor pre hlavný obrázok nieje obrázok.' );
+
 		$form->addMultiUpload( 'files', 'Vybrať obrázky' )
 			->addRule( $form::IMAGE, 'Niektorý z vybraných súborov nieje obrázok.' );
 
@@ -214,7 +217,7 @@ class ProductCreateFormControl extends Control
 		try
 		{
 			$this->product ? $this->productsService->updateProduct( $this->product, $values ) : $this->product = $this->productsService->createProduct( $values );
-			$uploadResult = $this->uploadsProductsService->saveProductImages( $this->product, $values['files'] );
+			$uploadResult = $this->uploadsProductsService->saveProductImages( $this->product, $values['mainFile'], $values['files'] );
 			if ( $uploadResult['errors'] )
 			{
 				foreach ( $uploadResult['errors'] as $e ) $presenter->flashDanger( $e );

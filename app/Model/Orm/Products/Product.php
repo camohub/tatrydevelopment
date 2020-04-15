@@ -28,9 +28,10 @@ use Nextras\Orm\Relationships\OneHasMany;
  * @property OneHasMany|Product[]                  $products          {virtual}
  *
  * @property OneHasMany|ProductParameter[]|NULL    $parameters        {1:m ProductParameter::$product, cascade=[persist, remove]}
- * @property OneHasMany|ProductParameter[]|NULL    $localParameters  {virtual}
+ * @property OneHasMany|ProductParameter[]|NULL    $localParameters   {virtual}
  * @property ManyHasMany|Category[]|NULL           $categories        {m:m Category::$products}
  * @property OneHasMany|ProductImage[]|NULL        $images            {1:m ProductImage::$product}
+ * @property ProductImage|NULL                     $mainImage         {virtual}
  */
 class Product extends Entity
 {
@@ -72,6 +73,12 @@ class Product extends Entity
 	public function getterLocalParameters()
 	{
 		return $this->parameters->get()->findBy(['lang' => BasePresenter::$staticLocale]);
+	}
+
+
+	public function getterMainImage()
+	{
+		return $this->images->get()->findBy(['main' => 1])->orderBy(['main' => 'DESC'])->fetch();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -17,6 +17,7 @@ class Images extends AbstractMigration
 				`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 				`product_id` int(10) UNSIGNED NOT NULL,
 				`file` varchar(100) COLLATE utf8mb4_slovak_ci NOT NULL,
+				`main` TINYINT UNSIGNED  DEFAULT NULL,
 				PRIMARY KEY (`id`),
 				KEY `products_images_product_id_k` (`product_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_slovak_ci

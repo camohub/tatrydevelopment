@@ -42,7 +42,12 @@
 	</div>
 
 	<div class="form-group">
-		<span class="btn btn-sm btn-primary" id="js-files">Vyberte obrázky</span>
+		<span class="btn btn-sm btn-primary" id="jsMainFile">Vyberte hlavný obrázok</span>
+		{input mainFile, class=>'hidden', id=>"mainFileInput"}
+	</div>
+
+	<div class="form-group">
+		<span class="btn btn-sm btn-primary" id="jsFiles">Vyberte obrázky</span>
 		{input files, class=>'hidden', id=>"filesInput"}
 	</div>
 
@@ -129,14 +134,23 @@
 		that.closest('.parameter-container').find('input').prop('checked', that.prop('checked'));
 	});
 
-	var jsFilesBtn = $('#js-files');
+	var jsFilesBtn = $('#jsFiles');
+	var jsMainFileBtn = $('#jsMainFile');
 	var filesInput = $('#filesInput');
+	var mainFileInput = $('#mainFileInput');
 	jsFilesBtn.on('click', function(e)
 	{
 		filesInput.trigger('click');
 	});
+	jsMainFileBtn.on('click', function(e)
+	{
+		mainFileInput.trigger('click');
+	});
 	filesInput.on('change', function (e) {
-		checkFileSize(filesInput, jsFilesBtn);
+		checkFilesSize(mainFileInput, filesInput, jsMainFileBtn, jsFilesBtn);
+	});
+	mainFileInput.on('change', function (e) {
+		checkFilesSize(mainFileInput, filesInput, jsMainFileBtn, jsFilesBtn);
 	});
 
 	var parametersContainer = $('#parameters-container');
@@ -151,8 +165,9 @@
 		});
 	});
 
-	function checkFileSize(jqInput, jsFilesBtn)
+	function checkFilesSize(jqMainFileInput, jqFilesInput, jsMainFileBtn, jsFilesBtn)
 	{
+		jsMainFileBtn.text('Vyberte hlavný obrázok');
 		jsFilesBtn.text('Vyberte obrázky');
 		// (Can't use `typeof FileReader === "function"` because apparently
 		// it comes back as "object" on some browsers. So just see if it's there
@@ -163,25 +178,38 @@
 		}
 
 		var size = 0;
-		input = jqInput[0];
+		var hasFiles = false;
+		var mainFileInput = jqMainFileInput[0];  // Removed jquery wrapper
+		var filesInput = jqFilesInput[0];
 
-		if (!input || !input.files || input.files.length < 1) {
-			console.log('There are no files selected.');
-			return;
-		}
-		else {
-			Array.from(input.files).forEach(function(file) {
+		if(filesInput && filesInput.files && filesInput.files.length > 0)
+		{
+			hasFiles = true;
+
+			Array.from(filesInput.files).forEach(function(file) {
 				size += file.size;
 			});
-
-			if( size > 9800000 ) {
-				alert('Veľkosť obrázkov presiahla povolený limit 10MB.');
-				input.value = '';
-				return;
-			}
-
-			jsFilesBtn.text(jsFilesBtn.text() + ' - vybrané ' + input.files.length);
 		}
+
+		if(mainFileInput && mainFileInput.files && mainFileInput.files.length > 0)
+		{
+			hasFiles = true;
+
+			Array.from(mainFileInput.files).forEach(function(file) {
+				size += file.size;
+			});
+		}
+
+		if( size > 9800000 ) {
+			alert('Veľkosť obrázkov presiahla povolený limit 10MB.');
+			filesInput.value = '';
+			mainFileInput.value = '';
+			return;
+		}
+
+		if(mainFileInput.files && mainFileInput.files.length > 0) jsMainFileBtn.text(jsMainFileBtn.text() + ' - vybraný ' + mainFileInput.files.length);
+		if(filesInput.files && filesInput.files.length > 0) jsFilesBtn.text(jsFilesBtn.text() + ' - vybrané ' + filesInput.files.length);
+
 	}
 </script>
 

@@ -35,7 +35,7 @@ class UploadsProductsService
 	}
 
 
-	public function saveProductImages( Product $product, $files )
+	public function saveProductImages( Product $product, $mainFile, $files )
 	{
 		$path = $this->path . '/' .$product->id;
 
@@ -51,11 +51,26 @@ class UploadsProductsService
 			throw new App\Exceptions\FileUploadCreateDirectoryException($e->getMessage());
 		}
 
+		$hasMain = FALSE;
 		$result = ['errors' => [], 'saved_items' => []];
+
+		if( $mainFile->hasFile() && $mainFile->isOk() )
+		{
+			$hasMain = TRUE;
+			array_unshift($files, $mainFile);
+			if( $prevMainImage = $product->mainImage )
+			{
+				$prevMainImage->main = NULL;
+				$this->orm->productsImages->persistAndFlush($prevMainImage);
+			}
+		}
+
+		$i = 0;
 		foreach ( $files as $file )
 		{
 			if ( $file->isOk() )
 			{
+				$i++;
 				$name = $file->getName();
 				$sName = $file->getSanitizedName();
 				$tmpName = $file->getTemporaryFile();
@@ -73,6 +88,7 @@ class UploadsProductsService
 
 					$productImage = new ProductImage();
 					$productImage->file = $sName;
+					if( $hasMain && $i === 1 ) $productImage->main = 1;
 					$productImage->product = $product;
 					$this->orm->productsImages->persistAndFlush($productImage, FALSE);
 
@@ -120,7 +136,6 @@ class UploadsProductsService
 	public function deleteById($id, $productId)
 	{
 		$image = $this->orm->productsImages->getBy(['id' => $id, 'product' => $productId]);
-		Debugger::barDump($image);
 		$this->unlink($this->path . '/' . $productId, $image->file);
 		$this->orm->productsImages->removeAndFlush($image);
 	}

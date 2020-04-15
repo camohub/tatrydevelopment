@@ -15,6 +15,7 @@ use Tracy\Debugger;
  * @property int                  $id                {primary}
  * @property Product|NULL         $product           {m:1 Product::$images}
  * @property string               $file
+ * @property int|NULL             $main
  */
 class ProductImage extends Entity
 {
